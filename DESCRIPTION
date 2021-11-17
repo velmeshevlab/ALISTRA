@@ -14,18 +14,18 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports:
-	pbapply
-	evobiR
-	devtools
-	ggrepel
-	igraph
-	TSclust
-	dynamicTreeCut
-	dendextend
-	factoextra
-	dplyr
-	TSdist
-	ggnewscale
-	viridis
-	speedglm
-	parallel
+pbapply
+evobiR
+devtools
+ggrepel
+igraph
+TSclust
+dynamicTreeCut
+dendextend
+factoextra
+dplyr
+TSdist
+ggnewscale
+viridis
+speedglm
+parallel

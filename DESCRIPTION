@@ -1,0 +1,31 @@
+Package: ANMOLIB
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Dmitry",
+           family = "Velmeshev",
+           role = "aut"
+           email = "dvelmeshev@gmail.com",
+           comment = c(ORCID = "0000-0002-6491-7307"))
+Description: Analysis of Monocle Lineage Branches. This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/monocle3) that allows isolating trajecory branches corresonding to individual lineages, identifying lineage-specific dynamically expressed genes, classifying genes based on their expression pattern and plotting gene expression along multiple lineages.
+License: use_mit_license()
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports:
+	pbapply
+	evobiR
+	devtools
+	ggrepel
+	igraph
+	TSclust
+	dynamicTreeCut
+	dendextend
+	factoextra
+	dplyr
+	TSdist
+	ggnewscale
+	viridis
+	speedglm
+	parallel

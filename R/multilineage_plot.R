@@ -33,13 +33,12 @@ theme_opts <- function()
     theme(legend.key=element_blank())
 }
 
-myCol = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan")
-myCol.mids = c("yellow", "deepskyblue", "darkolivegreen1")
-
+#' @export
 compress <- function(df, window = 3, step){
 df.comp = SlidingWindow("mean", df, window, step)
 }
 
+#' @export
 fit.m3 <- function(exp.sel, pt, max.pt, model = "expression ~ splines::ns(pseudotime, df=3)", N = 500){
 require(speedglm)
 family = stats::quasipoisson()
@@ -56,6 +55,7 @@ return(fit)
 }, error=function(cond) {return(rep("NA", N))})
 }
 
+#' @export
 compress_lineage <- function(cds, lineage, gene = FALSE, N = 500, cores = F){
 exp = compress_expression(cds, lineage, gene = gene, N = N, cores = cores)
 input = paste0("cds@expression$", lineage, " <- exp$expression")
@@ -65,6 +65,7 @@ eval(parse(text=input))
 return(cds)
 }
 
+#' @export
 compress_expression <- function(cds, lineage, gene = FALSE, N = 500, cores = F){
 if(cores != F){
 cl <- makeCluster(cores)
@@ -136,6 +137,7 @@ stopCluster(cl)
 return(exp)
 }
 
+#' @export
 ridge_plot <- function(gene, lineages_1, lineages_2, N = 500, colors1 = c("red", "blue", "green"), colors2 = c("coral", "cornflowerblue", "darkseagreen2"), label = F){
 exps_1 = list()
 means_1 = c()
@@ -202,6 +204,7 @@ figure <- eval(parse(text=input))
 figure
 }
 
+#' @export
 get_pt <- function(lineage){
 load(file = paste0(lineage, ".R"))
 pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
@@ -209,7 +212,8 @@ pt = pt[order(pt)]
 return(pt)
 }
 
-plot_multiple <- function(cds, gene, lineages, colors = myCol, colors.mids = myCol.mids, N = 500, legend_position = "right"){
+#' @export
+plot_multiple <- function(cds, gene, lineages, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), colors.mids = c("yellow", "deepskyblue", "darkolivegreen1"), N = 500, legend_position = "right"){
 input = paste0("cds@lineages$", lineages[1])
 exp = compress_expression(eval(parse(text=input)), gene, N)
 pt = exp[,3]

@@ -28,4 +28,5 @@ Imports:
     ggnewscale,
     viridis,
     speedglm,
-    parallel
+    parallel,
+    monocle3

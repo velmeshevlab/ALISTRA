@@ -29,4 +29,5 @@ Imports:
     viridis,
     speedglm,
     parallel,
-    monocle3
+    monocle3,
+    ggplot2

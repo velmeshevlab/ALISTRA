@@ -12,6 +12,7 @@ monocle_theme_opts <- function()
     theme(legend.key=element_blank())
 }
 
+#' @export
 combine_lineages <- function(cds, start){
 lineage = names(cds@lineages)[1]
 input = paste0("principal_graph(cds@lineages$", lineage,")[['UMAP']]")
@@ -33,6 +34,7 @@ cds <- order_cells(cds, root_pr_nodes = as.character(start))
 return(cds)
 }
 
+#' @export
 node_plot <- function(cds, filter = F, N = 50){
 Y <- cds@principal_graph_aux[["UMAP"]]$dp_mst
 d = as.data.frame(t(Y))
@@ -50,6 +52,7 @@ ggplot(data=d, aes(x=UMAP_1, y=UMAP_2)) + geom_point(size=0.01) + geom_text_repe
 }
 }
 
+#' @export
 path.distance <- function(path){
 dists=c()
 for(i in 2:nrow(path)){
@@ -79,6 +82,7 @@ return(FALSE)
 }
 }
 
+#' @export
 selector_sub <- function(node, cells, r){
 x1 = node[1]
 y1 = node[2]
@@ -87,12 +91,14 @@ res = names(res[res == TRUE])
 return(res)
 }
 
+#' @export
 cell.selector <- function(path, cells, r, cl){
 sel.cells = c()
 sel.cells = pbapply(path, 1, selector_sub, cells = cells, r = r, cl = cl, simplify = T)
 return(unique(unlist(sel.cells)))
 }
 
+#' @export
 make_graph <- function(sub.graph){
 edges = names(sub.graph)
 start.edges = c()
@@ -106,10 +112,12 @@ g = graph_from_data_frame(d, directed = F)
 return(g)
 }
 
+#' @export
 included <- function(graph, include_nodes){
 all(include_nodes %in% names(graph))
 }
 
+#' @export
 isolate_graph <- function(cds, start, end, lineage, include_nodes = F){
 #get lineage graph
 reduction_method = "UMAP"
@@ -128,7 +136,7 @@ eval(parse(text=input))
 return(cds)
 }
 
-#this is an "improved" lineage isolation function that recalculates pseudotime based on selected branch
+#' @export
 isolate_lineage <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 input = paste0("sub.graph = cds@graphs$", lineage)
 eval(parse(text=input))
@@ -185,12 +193,14 @@ eval(parse(text=input))
 return(cds)
 }
 
+#' @export
 calculate_closest_vertex <- function(cells, nodes){
 new.pos = as.numeric(cells)
 nearest.idx <- which.min(colSums((nodes - new.pos)^2))
 out = as.integer(gsub("Y_", "", names(nearest.idx)))
 }
 
+#' @export
 connect_nodes <- function(cds, node1, node2){
 graph.old = cds@principal_graph[["UMAP"]]
 graph.new <- add_edges(graph.old, c(node1, node2))
@@ -198,6 +208,7 @@ cds@principal_graph[["UMAP"]] <- graph.new
 return(cds)
 }
 
+#' @export
 import_monocle <-function(cds){
 setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
 cds <- as(cds,"cell_data_set_ext")

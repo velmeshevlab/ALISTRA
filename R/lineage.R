@@ -1,5 +1,3 @@
-setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
-
 monocle_theme_opts <- function()
 {
   theme(strip.background = element_rect(colour = 'white', fill = 'white')) +
@@ -201,6 +199,7 @@ return(cds)
 }
 
 import_monocle <-function(cds){
+setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
 cds <- as(cds,"cell_data_set_ext")
 return(cds)
 }

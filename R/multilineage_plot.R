@@ -139,11 +139,11 @@ return(exp)
 }
 
 #' @export
-ridge_plot <- function(gene, lineages_1, lineages_2, N = 500, colors1 = c("red", "blue", "green"), colors2 = c("coral", "cornflowerblue", "darkseagreen2"), label = F){
+ridge_plot <- function(cds, cds1, gene, lineages_1, lineages_2, N = 500, colors1 = c("red", "blue", "green"), colors2 = c("coral", "cornflowerblue", "darkseagreen2"), label = F){
 exps_1 = list()
 means_1 = c()
 for(lineage in lineages_1){
-exp = compress_expression(lineage, toupper(gene))
+exp = compress_expression(cds, lineage, gene = toupper(gene), N)
 exp = exp$expectation
 mean = mean(quantile(exp, probs = seq(0, 1, by= 0.01))[6:96])
 means_1 = append(means_1, mean)
@@ -152,7 +152,7 @@ exps_1[[lineage]] = exp
 exps_2 = list()
 means_2 = c()
 for(lineage in lineages_2){
-exp = compress_expression(lineage, gene)
+exp = compress_expression(cds1, lineage, gene = gene, N)
 exp = exp$expectation
 mean = mean(quantile(exp, probs = seq(0, 1, by= 0.01))[6:96])
 means_2 = append(means_2, mean)

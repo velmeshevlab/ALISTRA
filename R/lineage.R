@@ -1,3 +1,21 @@
+#' @import monocle3
+#' @import ggplot2
+#' @import pbapply
+#' @import evobiR
+#' @import devtools
+#' @import ggrepel
+#' @import igraph
+#' @import TSclust
+#' @import dynamicTreeCut
+#' @import dendextend
+#' @import factoextra
+#' @import dplyr
+#' @import TSdist
+#' @import ggnewscale
+#' @import viridis
+#' @import speedglm
+#' @import parallel
+
 monocle_theme_opts <- function()
 {
   theme(strip.background = element_rect(colour = 'white', fill = 'white')) +
@@ -209,8 +227,10 @@ return(cds)
 }
 
 #' @export
-import_monocle <-function(cds){
 setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
+
+#' @export
+import_monocle <-function(cds){
 cds <- as(cds,"cell_data_set_ext")
 return(cds)
 }

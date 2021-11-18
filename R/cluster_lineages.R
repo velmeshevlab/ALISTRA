@@ -1,5 +1,4 @@
-myCol = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan")
-
+#' @export
 calc_dist <- function(lineage1, lineage2, pt_genes = FALSE, dist_method = "CORT", q = 0.05, I = 0.15, adjust = F, cores = 1){
 if(pt_genes == FALSE){
 pt_genes = c()
@@ -43,6 +42,7 @@ out = pbmapply(ACFDistance, fit1.list, fit2.list)
 return(out)
 }
 
+#' @export
 calc_dist_lineages <- function(lineages, pt_genes = FALSE, dist_method = "CORT", suffix = "", q = 0.05, I = 0.15){
 if(pt_genes == FALSE){
 pt_genes = c()
@@ -78,6 +78,7 @@ dis = TSclust::diss(d, dist_method)
 return(list("dis" = dis, "d" = d))
 }
 
+#' @export
 clust_lineages <- function(d, dis, k, lineage_names, colors, suffix = ""){
 tree = hclust(dis, method = "ward.D2")
 png(filename = paste0("tree_",suffix,".png"), width = 35000, height = 2080, bg = "white",  res = 300);
@@ -119,7 +120,8 @@ hcd %>% rect.dendrogram(cluster = clust, k = k, horiz = F, lwd = 5, lower_rect =
 dev.off()
 }
 
-average_curves <- function(d, dis, k, colors = myCol, N = 500){
+#' @export
+average_curves <- function(d, dis, k, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500){
 tree = hclust(dis, method = "ward.D2")
 clust = cutree(tree, k = k)
 clusters = unique(clust[tree$order])

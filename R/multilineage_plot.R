@@ -77,7 +77,8 @@ cds_subset = eval(parse(text=input))
 family = stats::quasipoisson()
 model = "expression ~ splines::ns(pseudotime, df=3)"
 names(cds_subset) <- rowData(cds_subset)$gene_short_name
-exp = t(t(exprs(cds_subset)) /  pData(cds_subset)[, 'Size_Factor'])
+exp = as.data.frame(as.matrix(exprs(cds_subset)))
+exp = t(t(exp) /  pData(cds_subset)[, 'Size_Factor'])
 pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
 pt <- as.data.frame(pt)
 colnames(pt) <- c("pseudotime")
@@ -214,15 +215,13 @@ return(pt)
 
 #' @export
 plot_multiple <- function(cds, gene, lineages, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), colors.mids = c("yellow", "deepskyblue", "darkolivegreen1"), N = 500, legend_position = "right"){
-input = paste0("cds@lineages$", lineages[1])
-exp = compress_expression(eval(parse(text=input)), gene, N)
+exp = compress_expression(cds, lineages[1], gene = gene, N)
 pt = exp[,3]
 dd = as.data.frame(pt)
 cols = c("pseudotime")
 fits = c()
 for(lineage in lineages){
-input = paste0("cds@lineages$", lineage)
-exp = compress_expression(eval(parse(text=input)), gene, N)
+exp = compress_expression(cds, lineage, gene = gene, N)
 dd = cbind(dd, exp[1:2])
 cols = append(cols, paste0("exp_", lineage))
 cols = append(cols, paste0("fit_", lineage))

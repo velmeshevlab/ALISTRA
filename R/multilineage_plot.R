@@ -71,7 +71,6 @@ if(cores != F){
 cl <- makeCluster(cores)
 clusterEvalQ(cl, c(library(evobiR)))
 }
-print(paste0("Compressing lineage ", lineage, " and fitting curves"))
 input = paste0("cds@lineages$", lineage)
 cds_subset = eval(parse(text=input))
 family = stats::quasipoisson()
@@ -95,6 +94,7 @@ exp = exp[,c("pseudotime", gene)]
 exp.comp = compress(exp[,gene], 3, step = step)
 }
 else{
+print(paste0("Compressing lineage ", lineage, " and fitting curves"))
 mat <- as.data.frame(exp[,2:ncol(exp)])
 if(cores != F){
 exp.comp = pbsapply(mat, compress, step = step, cl = cl)

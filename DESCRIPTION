@@ -13,6 +13,24 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+Depends:
+    pbapply,
+    evobiR,
+    devtools,
+    ggrepel,
+    igraph,
+    TSclust,
+    dynamicTreeCut,
+    dendextend,
+    factoextra,
+    dplyr,
+    TSdist,
+    ggnewscale,
+    viridis,
+    speedglm,
+    parallel,
+    monocle3,
+    ggplot2
 Imports:
     pbapply,
     evobiR,

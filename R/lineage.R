@@ -154,7 +154,7 @@ eval(parse(text=input))
 return(cds)
 }
 
-get_lineage_object <- function(cds, sel.cells, sub.graph, start)
+get_lineage_object <- function(cds, lineage, start)
 {
 #subset the moncole object
 cds_subset = cds[,sel.cells]

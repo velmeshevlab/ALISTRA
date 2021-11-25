@@ -160,6 +160,7 @@ input = paste0("sub.graph = cds@graphs$", lineage)
 eval(parse(text=input))
 input = paste0("sel.cells = cds@lineages$", lineage)
 eval(parse(text=input))
+nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
 #subset the moncole object
 cds_subset = cds[,sel.cells]
 #set the graph, node and cell UMAP coordinates

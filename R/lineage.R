@@ -48,7 +48,7 @@ closest_vertex = as.data.frame(closest_vertex)
 cds@principal_graph_aux[["UMAP"]]$pr_graph_cell_proj_closest_vertex <- closest_vertex
 source_url("https://raw.githubusercontent.com/cole-trapnell-lab/monocle3/master/R/learn_graph.R")
 cds <- project2MST(cds, project_point_to_line_segment, F, T, "UMAP", nodes_UMAP[,names(V(g))])
-cds <- order_cells(cds, root_pr_nodes = as.character(start))
+cds <- order_cells(cds, root_pr_nodes = as.character(paste0("Y_",start)))
 return(cds)
 }
 

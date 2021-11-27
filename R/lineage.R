@@ -33,11 +33,11 @@ monocle_theme_opts <- function()
 #' @export
 combine_lineages <- function(cds, start){
 lineage = names(cds@lineages)[1]
-input = paste0("principal_graph(cds@lineages$", lineage,")[['UMAP']]")
+input = paste0("cds@graphs$", lineage)
 for(lineage in names(cds@lineages)[2:length(names(cds@lineages))]){
-input = paste0(input,",principal_graph(cds@lineages$", lineage,")[['UMAP']]")
+input = paste0(input,",cds@graphs$", lineage)
 }
-input = paste0("union(", input, ")")
+input = paste0("igraph::union(", input, ")")
 g = eval(parse(text=input))
 nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
 principal_graph(cds)[["UMAP"]] <- g

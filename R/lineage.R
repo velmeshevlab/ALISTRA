@@ -183,8 +183,7 @@ cds_subset <- order_cells(cds_subset, root_pr_nodes = c(paste0("Y_", as.characte
 return(cds_subset)
 }
 
-#' @export
-isolate_lineage <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
+isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 input = paste0("sub.graph = cds@graphs$", lineage)
 eval(parse(text=input))
 nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
@@ -221,6 +220,12 @@ sel.cells2 = names(cds@"clusters"[["UMAP"]]$clusters[cds@"clusters"[["UMAP"]]$cl
 }
 cells = unique(c(sel.cells1, sel.cells2))
 sel.cells = sel.cells[sel.cells %in% cells]
+return(sel.cells)
+}
+
+#' @export
+isolate_lineage <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
+isolate_lineage_sub(cds, lineage, sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
 input = paste0("cds@lineages$", lineage, " <- sel.cells")
 eval(parse(text=input))
 return(cds)

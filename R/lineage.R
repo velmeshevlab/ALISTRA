@@ -140,7 +140,7 @@ isolate_graph_sub <- function(cds, start, end, lineage, include_nodes = F){
 reduction_method = "UMAP"
 graph = cds@principal_graph[[reduction_method]]
 #select cells that are 1) progenitor cells from the region of interest (MGE, CGE) or 2) lineage-committed cells
-sub.graph = all_simple_paths(graph, start, end)
+sub.graph = all_simple_paths(graph, paste0("Y_", start), paste0("Y_", end))
 if(include_nodes != F){
 sub.graph = sub.graph[sapply(sub.graph, included, include_nodes = include_nodes)]
 }

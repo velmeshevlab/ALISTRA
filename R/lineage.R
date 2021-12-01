@@ -235,9 +235,11 @@ return(cds)
 isolate_fork <- function(cds, start, end1, end2, lineage, include_nodes = F, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 #get lineage graphs
 graph1 = isolate_graph_sub(cds, start, end1, paste0(lineage, "_1"), include_nodes = include_nodes)
+graph1 = make_graph(graph1)
 input = paste0("cds@graphs$", paste0(lineage, "_1"), " <- graph1")
 eval(parse(text=input))
 graph2 = isolate_graph_sub(cds, start, end2, paste0(lineage, "_2"), include_nodes = include_nodes)
+graph2 = make_graph(graph2)
 input = paste0("cds@graphs$", paste0(lineage, "_2"), " <- graph2")
 eval(parse(text=input))
 graph = igraph::union(graph1, graph2)

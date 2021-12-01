@@ -232,7 +232,6 @@ return(cds)
 }
 
 #' @export
-#' @export
 isolate_fork <- function(cds, start, end1, end2, lineage, include_nodes = F, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 #get lineage graphs
 graph1 = isolate_graph_sub(cds, start, end1, paste0(lineage, "_1"), include_nodes = include_nodes)

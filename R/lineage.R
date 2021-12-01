@@ -232,14 +232,26 @@ return(cds)
 }
 
 #' @export
+#' @export
 isolate_fork <- function(cds, start, end1, end2, lineage, include_nodes = F, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 #get lineage graphs
 graph1 = isolate_graph_sub(cds, start, end1, paste0(lineage, "_1"), include_nodes = include_nodes)
+input = paste0("cds@graphs$", paste0(lineage, "_1"), " <- graph1")
+eval(parse(text=input))
 graph2 = isolate_graph_sub(cds, start, end2, paste0(lineage, "_2"), include_nodes = include_nodes)
+input = paste0("cds@graphs$", paste0(lineage, "_2"), " <- graph2")
+eval(parse(text=input))
 graph = igraph::union(graph1, graph2)
+input = paste0("cds@graphs$", lineage, " <- graph")
+eval(parse(text=input))
 cell1 = isolate_lineage_sub(cds, paste0(lineage, "_1"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
+input = paste0("cds@lineages$", paste0(lineage, "_1"), " <- cell1")
+eval(parse(text=input))
 cell2 = isolate_lineage_sub(cds, paste0(lineage, "_3"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
-input = paste0("cds@graphs$", lineage, " <- make_graph(sub.graph)")
+input = paste0("cds@lineages$", paste0(lineage, "_2"), " <- cell2")
+eval(parse(text=input))
+cells = unique(cells1, cells2)
+input = paste0("cds@lineages$", lineage, " <- cell")
 eval(parse(text=input))
 return(cds)
 }

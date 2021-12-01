@@ -135,8 +135,7 @@ included <- function(graph, include_nodes){
 all(include_nodes %in% names(graph))
 }
 
-#' @export
-isolate_graph <- function(cds, start, end, lineage, include_nodes = F){
+isolate_graph_sub <- function(cds, start, end, lineage, include_nodes = F){
 #get lineage graph
 reduction_method = "UMAP"
 graph = cds@principal_graph[[reduction_method]]
@@ -149,6 +148,12 @@ lengths = lengths(sub.graph)
 #get the shortest path
 n = which(lengths==min(lengths))[1]
 sub.graph = sub.graph[[n]]
+}
+
+#' @export
+isolate_graph <- function(cds, start, end, lineage, include_nodes = F){
+#get lineage graph
+sub.graph = isolate_graph_sub(cds, start, end, lineage, include_nodes = F)
 input = paste0("cds@graphs$", lineage, " <- make_graph(sub.graph)")
 eval(parse(text=input))
 return(cds)

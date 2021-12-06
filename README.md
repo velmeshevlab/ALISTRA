@@ -9,17 +9,15 @@ This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/m
 1) After building trajectories with Monocle, import Monocle object:
 > cds = import_monocle(cds)
 
-2) Displate nodes of the trajectory graph:
+2) Display nodes of the trajectory graph:
 > node_plot(cds)
 
 If the nodes are too dense to see, filter = T option can be used to skip non-terminal and non-branching nodes, and the node density can be set with option N. Larger N skips more nodes.
 
 3) If necessary, connect nodes that you believe should be part of one branch based on biological assumptions, but were not joined by Monocle:
-
 > cds <- connect_nodes(cds, "Y_790", "Y_550")
 
 4) Isolate graph for a selected lineage by setting the start and end nodes. Nodes should be used as integers here.
-
 > lineage = "lineage_name"
 > 
 > start = 1521
@@ -29,7 +27,6 @@ If the nodes are too dense to see, filter = T option can be used to skip non-ter
 > cds<- isolate_graph(cds, start, end, lineage)
 
 5) Select cells along the graph for the lineage:
-
 > lineage = "lineage_name"
 > 
 > cds<- isolate_lineage(cds, lineage)

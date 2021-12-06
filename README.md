@@ -13,4 +13,8 @@ This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/m
 
 If the nodes are too dense to see, filter = T option can be used to skip non-terminal and non-branching nodes, and the node density can be set with the N. Larger N skips more nodes.
 
-3) 
+3) If necessary, connect nodes that you believe should be part of one branch based on biological assumptions, but were not joined by Monocle:
+
+> cds = connect_nodes(cds, "Y_790", "Y_550")
+
+4) 

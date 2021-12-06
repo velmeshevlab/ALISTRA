@@ -6,7 +6,7 @@ This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/m
 
 # Tutorial
 ## Monocle object import and isolating lineages
-1) After building trajectories, import Monocle object:
+1) After building trajectories with Monocle, import Monocle object:
 > cds = import_monocle(cds)
 
 2) Displate nodes of the trajectory graph:

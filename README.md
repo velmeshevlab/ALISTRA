@@ -26,6 +26,18 @@ If the nodes are too dense to see, filter = T option can be used to skip non-ter
 > 
 > end = 247
 > 
-> cds <- cds<- isolate_graph(cds, start, end, lineage)
+> cds<- isolate_graph(cds, start, end, lineage)
+
+5) Select cells along the graph for the lineage:
+
+> lineage = "lineage_name"
+> 
+> cds<- isolate_lineage(cds, lineage)
+
+The fuction can also be configured to select cells in a smaller or larger radius around each node by changing the parameter N (default is 10).
+
+If cells should only be selected from certain clusters, sel_clusters parameter can be used.
+
+Finally, the function allows for multithreading by setting the cl parameter to number of threads.
 
 

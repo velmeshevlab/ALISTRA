@@ -37,11 +37,19 @@ If cells should only be selected from certain clusters, sel_clusters parameter c
 
 Finally, the function allows for multithreading by setting the cl parameter to number of threads.
 
-6) Finally, after all desired lineaged have been selected, they can be combined into one graph, and the rest of original graph branches built by Monocle will be ignored:
+6) Monocle object for each separate lineage can be isolated for plotting or downstream analysis:
+> start = 1521
+> cds_sub = get_lineage_object(cds, "lineage_name", 2980)
+
+Where start is the starting node in the lineage.
+
+7) Finally, after all desired lineaged have been selected, they can be combined into one graph, and the rest of original graph branches built by Monocle will be ignored:
 > start = 1521
 >
 > cds <- combine_lineages(cds, start)
 
 start should be set to the common starting point of trajectories to recalculate pseudotime.
+
+
 
 

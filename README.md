@@ -12,7 +12,7 @@ This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/m
 2) Displate nodes of the trajectory graph:
 > node_plot(cds)
 
-If the nodes are too dense to see, filter = T option can be used to skip non-terminal and non-branching nodes, and the node density can be set with the N. Larger N skips more nodes.
+If the nodes are too dense to see, filter = T option can be used to skip non-terminal and non-branching nodes, and the node density can be set with option N. Larger N skips more nodes.
 
 3) If necessary, connect nodes that you believe should be part of one branch based on biological assumptions, but were not joined by Monocle:
 

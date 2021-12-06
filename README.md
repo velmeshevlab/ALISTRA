@@ -6,7 +6,8 @@ This package is an extension of monocle3 (https://github.com/cole-trapnell-lab/m
 
 # Tutorial
 1) After building trajectories, import Monocle object:
-cds = import_monocle(cds)
+
+> cds = import_monocle(cds)
 
 2) Displate nodes of the trajectory graph:
 node_plot(cds)

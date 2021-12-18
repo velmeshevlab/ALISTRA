@@ -151,6 +151,12 @@ sub.graph = sub.graph[[n]]
 }
 
 #' @export
+isolate_fork <- function(cds, start, end1, end2, name, include_nodes = F){
+graph1 = isolate_graph(cds, start, end1, paste0(name, "_fork_1"), include_nodes = include_nodes)
+graph2 = isolate_graph(cds, start, end2, paste0(name, "_fork_1"), include_nodes = include_nodes)
+}
+
+#' @export
 isolate_graph <- function(cds, start, end, lineage, include_nodes = F){
 #get lineage graph
 sub.graph = isolate_graph_sub(cds, start, end, lineage, include_nodes = F)

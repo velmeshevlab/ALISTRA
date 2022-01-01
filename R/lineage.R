@@ -234,25 +234,25 @@ return(cds)
 #' @export
 isolate_fork <- function(cds, start, end1, end2, lineage, include_nodes = F, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 #get lineage graphs
-graph1 = isolate_graph_sub(cds, start, end1, paste0(lineage, "_1"), include_nodes = include_nodes)
+graph1 = isolate_graph_sub(cds, start, end1, paste0(lineage, "_fork_1"), include_nodes = include_nodes)
 graph1 = make_graph(graph1)
-input = paste0("cds@fork_graphs$", paste0(lineage, "_1"), " <- graph1")
+input = paste0("cds@graphs$", paste0(lineage, "_fork_1"), " <- graph1")
 eval(parse(text=input))
-graph2 = isolate_graph_sub(cds, start, end2, paste0(lineage, "_2"), include_nodes = include_nodes)
+graph2 = isolate_graph_sub(cds, start, end2, paste0(lineage, "_fork_2"), include_nodes = include_nodes)
 graph2 = make_graph(graph2)
-input = paste0("cds@fork_graphs$", paste0(lineage, "_2"), " <- graph2")
+input = paste0("cds@graphs$", paste0(lineage, "_fork_2"), " <- graph2")
 eval(parse(text=input))
 graph = igraph::union(graph1, graph2)
-input = paste0("cds@fork_graphs$", lineage, " <- graph")
+input = paste0("cds@graphs$", paste0(lineage, "_fork"), " <- graph")
 eval(parse(text=input))
-cells1 = isolate_lineage_sub(cds, paste0(lineage, "_1"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
-input = paste0("cds@fork_lineages$", paste0(lineage, "_1"), " <- cells1")
+cells1 = isolate_lineage_sub(cds, paste0(lineage, "_fork_1"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
+input = paste0("cds@lineages$", paste0(lineage, "_fork_1"), " <- cells1")
 eval(parse(text=input))
-cells2 = isolate_lineage_sub(cds, paste0(lineage, "_2"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
-input = paste0("cds@fork_lineages$", paste0(lineage, "_2"), " <- cells2")
+cells2 = isolate_lineage_sub(cds, paste0(lineage, "_fork_2"), sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
+input = paste0("cds@lineages$", paste0(lineage, "_fork_2"), " <- cells2")
 eval(parse(text=input))
 cells = unique(c(cells1, cells2))
-input = paste0("cds@fork_lineages$", lineage, " <- cells")
+input = paste0("cds@lineages$", paste0(lineage, "_fork"), " <- cells")
 eval(parse(text=input))
 return(cds)
 }
@@ -273,7 +273,7 @@ return(cds)
 }
 
 #' @export
-setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", fork_graphs = "list", fork_lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
+setClass("cell_data_set_ext", contains = "cell_data_set", slots=c(graphs = "list", lineages="list", expression="list", expectation="list")) -> cell_data_set_ext
 
 #' @export
 import_monocle <-function(cds){

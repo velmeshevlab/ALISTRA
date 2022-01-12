@@ -13,10 +13,12 @@ pt_genes = union(pt_genes, toupper(d$gene_short_name))
 }
 }
 }
-load(file = paste0(lineage1,"_fit_comp.R"))
+input = paste0("fit = cds@expectation$", lineage1)
+eval(parse(text=input))
 colnames(fit) <- toupper(colnames(fit))
 fit1 = fit[,colnames(fit)%in%pt_genes]
-load(file = paste0(lineage2,"_fit_comp.R"))
+input = paste0("fit = cds@expectation$", lineage2)
+eval(parse(text=input))
 colnames(fit) <- toupper(colnames(fit))
 fit2 = fit[,colnames(fit)%in%pt_genes]
 pt_genes = intersect(pt_genes, intersect(colnames(fit1), colnames(fit2)))

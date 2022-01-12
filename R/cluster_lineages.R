@@ -57,10 +57,12 @@ pt_genes = union(pt_genes, toupper(d$gene_short_name))
 }
 }
 }
-load(file = paste0(lineages[1],"_fit_comp.R"))
+input = paste0("fit = cds@expectation$", lineages[1])
+eval(parse(text=input))
 fit.comb = matrix(ncol = 0, nrow = nrow(fit), 0)
 for(lineage in lineages){
-load(file = paste0(lineage,"_fit_comp.R"))
+input = paste0("fit = cds@expectation$", lineage)
+eval(parse(text=input))
 colnames(fit) <- toupper(colnames(fit))
 fit = fit[,colnames(fit)%in%pt_genes]
 colnames(fit) <- paste(lineage, colnames(fit), sep = "_")

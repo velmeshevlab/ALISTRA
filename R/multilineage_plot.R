@@ -57,7 +57,7 @@ return(fit)
 
 #' @export
 compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
-exp = compress_expression(cds, lineage, gene = gene, N = N, cores = cores)
+exp = compress_expression(cds, lineage, start=start, gene = gene, N = N, cores = cores)
 input = paste0("cds@expression$", lineage, " <- exp$expression")
 eval(parse(text=input))
 input = paste0("cds@expectation$", lineage, " <- exp$expectation")

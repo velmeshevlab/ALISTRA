@@ -56,7 +56,7 @@ return(fit)
 }
 
 #' @export
-compress_lineage <- function(cds, lineage, gene = FALSE, N = 500, cores = F){
+compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
 exp = compress_expression(cds, lineage, gene = gene, N = N, cores = cores)
 input = paste0("cds@expression$", lineage, " <- exp$expression")
 eval(parse(text=input))
@@ -66,12 +66,12 @@ return(cds)
 }
 
 #' @export
-compress_expression <- function(cds, lineage, gene = FALSE, N = 500, cores = F){
+compress_expression <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
 if(cores != F){
 cl <- makeCluster(cores)
 clusterEvalQ(cl, c(library(evobiR)))
 }
-input = paste0("cds@lineages$", lineage)
+input = paste0("get_lineage_object(cds, ", lineage, ",", start)
 cds_subset = eval(parse(text=input))
 family = stats::quasipoisson()
 model = "expression ~ splines::ns(pseudotime, df=3)"

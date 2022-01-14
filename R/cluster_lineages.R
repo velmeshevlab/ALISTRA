@@ -83,8 +83,8 @@ return(list("dis" = dis, "d" = d))
 }
 
 #' @export
-clust_lineages <- function(d, dis, k, lineage_names, colors, suffix = "", myCol = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan")){
-tree = hclust(dis, method = "ward.D2")
+clust_lineages <- function(d, dis, k, lineage_names, colors, suffix = "", myCol = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), method = "ward.D2"){
+tree = hclust(dis, method = method)
 png(filename = paste0("tree_",suffix,".png"), width = 35000, height = 2080, bg = "white",  res = 300);
 plot(tree)
 rect.hclust(tree, k = k, border = 2:10)

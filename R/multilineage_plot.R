@@ -56,6 +56,24 @@ return(fit)
 }
 
 #' @export
+as_matrix <- function(mat){
+
+  tmp <- matrix(data=0L, nrow = mat@Dim[1], ncol = mat@Dim[2])
+  
+  row_pos <- mat@i+1
+  col_pos <- findInterval(seq(mat@x)-1,mat@p[-1])+1
+  val <- mat@x
+    
+  for (i in seq_along(val)){
+      tmp[row_pos[i],col_pos[i]] <- val[i]
+  }
+    
+  row.names(tmp) <- mat@Dimnames[[1]]
+  colnames(tmp) <- mat@Dimnames[[2]]
+  return(tmp)
+}
+
+#' @export
 compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
 exp = compress_expression(cds, lineage, start=start, gene = gene, N = N, cores = cores)
 input = paste0("cds@expression$", lineage, " <- exp$expression")
@@ -76,7 +94,7 @@ cds_subset = eval(parse(text=input))
 family = stats::quasipoisson()
 model = "expression ~ splines::ns(pseudotime, df=3)"
 names(cds_subset) <- rowData(cds_subset)$gene_short_name
-exp = as.data.frame(as.matrix(exprs(cds_subset)))
+exp = as.data.frame(as_matrix(exprs(cds_subset)))
 exp = t(t(exp) /  pData(cds_subset)[, 'Size_Factor'])
 pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
 pt <- as.data.frame(pt)

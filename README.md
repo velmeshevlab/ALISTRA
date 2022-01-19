@@ -39,6 +39,7 @@ Finally, the function allows for multithreading by setting the cl parameter to n
 
 6) Monocle object for each separate lineage can be isolated for plotting or downstream analysis:
 > start = 1521
+> 
 > cds_sub = get_lineage_object(cds, "lineage_name", 2980)
 
 Where start is the starting node in the lineage.

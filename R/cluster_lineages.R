@@ -112,7 +112,7 @@ fit.comb = cbind(fit.comb, fit)
 fit.comb = apply(fit.comb, 2, as.numeric)
 fit.comb = as.data.frame(fit.comb)
 d = log10(t(fit.comb)+1)
-print(paste0("Clustering ", nrow(d), " genes across ", length(lineages), " lineages"))
+print(paste0("Clustering ", length(pt_genes), " genes across ", length(lineages), " lineages"))
 clust = tsclust(d, k = k)
 res = cbind(rownames(d),clust@cluster)
 res

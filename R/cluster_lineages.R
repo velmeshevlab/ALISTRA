@@ -97,7 +97,7 @@ pt_genes = union(pt_genes, toupper(d$gene_short_name))
 }
 }
 }
-cds = deparse(substitute(v1))
+cds = deparse(substitute(cds))
 input = paste0("fit = ",cds,"@expectation$", lineages[1])
 eval(parse(text=input))
 fit.comb = matrix(ncol = 0, nrow = nrow(fit), 0)

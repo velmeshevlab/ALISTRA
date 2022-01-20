@@ -83,6 +83,41 @@ return(list("dis" = dis, "d" = d))
 }
 
 #' @export
+clust_lineages_DTW <- function(cds, lineages, k, pt_genes = FALSE, suffix = "", q = 0.05, I = 0.15, lineage_names, colors, suffix = "", myCol = c("pink1", "violet", "mediumpurple1", "slateblue1", "purple", "purple3",  "turquoise2", "skyblue", "steelblue", "blue2", "navyblue",  "orange", "tomato", "coral2", "khaki1", "violetred", "red2",  "springgreen2", "yellowgreen", "palegreen4",  "wheat2", "tan", "tan2", "tan3", "brown",  "grey70", "grey50", "grey30", "aquamarine", "bisque3", "cornflowerblue", "darkseagreen1", "darkred", "lightgreen","hotpink"), method = "ward.D2"){
+if(pt_genes == FALSE){
+pt_genes = c()
+for(lineage in lineages){
+d = read.table(paste0("pt_DGE_", lineage,".txt"), sep = "\t", header = T)
+d = d[d$q_value < q & d$morans_I >= I,]
+if(length(pt_genes) == 0){
+pt_genes = toupper(d$gene_short_name)
+}
+else{
+pt_genes = union(pt_genes, toupper(d$gene_short_name))
+}
+}
+}
+cds = deparse(substitute(v1))
+input = paste0("fit = ",cds,"@expectation$", lineages[1])
+eval(parse(text=input))
+fit.comb = matrix(ncol = 0, nrow = nrow(fit), 0)
+for(lineage in lineages){
+input = paste0("fit = ",cds,"@expectation$", lineage)
+eval(parse(text=input))
+colnames(fit) <- toupper(colnames(fit))
+fit = fit[,colnames(fit)%in%pt_genes]
+colnames(fit) <- paste(lineage, colnames(fit), sep = "_")
+fit.comb = cbind(fit.comb, fit)
+}
+fit.comb = apply(fit.comb, 2, as.numeric)
+fit.comb = as.data.frame(fit.comb)
+d = log10(t(fit.comb)+1)
+clust = tsclust(d, k = k)
+res = cbind(rownames(d),clust@cluster)
+res
+}
+
+#' @export
 clust_lineages <- function(d, dis, k, lineage_names, colors, suffix = "", myCol = c("pink1", "violet", "mediumpurple1", "slateblue1", "purple", "purple3",  "turquoise2", "skyblue", "steelblue", "blue2", "navyblue",  "orange", "tomato", "coral2", "khaki1", "violetred", "red2",  "springgreen2", "yellowgreen", "palegreen4",  "wheat2", "tan", "tan2", "tan3", "brown",  "grey70", "grey50", "grey30", "aquamarine", "bisque3", "cornflowerblue", "darkseagreen1", "darkred", "lightgreen","hotpink"), method = "ward.D2"){
 tree = hclust(dis, method = method)
 png(filename = paste0("tree_",suffix,".png"), width = 3500, height = 2080, bg = "white",  res = 300);

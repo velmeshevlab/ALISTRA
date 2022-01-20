@@ -83,7 +83,7 @@ return(list("dis" = dis, "d" = d))
 }
 
 #' @export
-clust_lineages_DTW <- function(cds, lineages, k, pt_genes = FALSE, suffix = "", q = 0.05, I = 0.15, lineage_names, colors, suffix = "", myCol = c("pink1", "violet", "mediumpurple1", "slateblue1", "purple", "purple3",  "turquoise2", "skyblue", "steelblue", "blue2", "navyblue",  "orange", "tomato", "coral2", "khaki1", "violetred", "red2",  "springgreen2", "yellowgreen", "palegreen4",  "wheat2", "tan", "tan2", "tan3", "brown",  "grey70", "grey50", "grey30", "aquamarine", "bisque3", "cornflowerblue", "darkseagreen1", "darkred", "lightgreen","hotpink"), method = "ward.D2"){
+clust_lineages_DTW <- function(cds, lineages, k, pt_genes = FALSE, q = 0.05, I = 0.15){
 if(pt_genes == FALSE){
 pt_genes = c()
 for(lineage in lineages){

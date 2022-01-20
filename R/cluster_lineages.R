@@ -83,7 +83,7 @@ return(list("dis" = dis, "d" = d))
 }
 
 #' @export
-clust_lineages_DTW <- function(cds, lineages, k, pt_genes = FALSE, q = 0.05, I = 0.15){
+get_pt_exp <-function(cds, lineages, pt_genes = FALSE, q = 0.05, I = 0.15){
 if(pt_genes == FALSE){
 pt_genes = c()
 for(lineage in lineages){
@@ -112,9 +112,6 @@ fit.comb = cbind(fit.comb, fit)
 fit.comb = apply(fit.comb, 2, as.numeric)
 fit.comb = as.data.frame(fit.comb)
 d = log10(t(fit.comb)+1)
-print(paste0("Clustering ", length(pt_genes), " genes across ", length(lineages), " lineages"))
-res = tsclust(d, k = k)
-res
 }
 
 #' @export

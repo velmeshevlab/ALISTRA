@@ -1,3 +1,27 @@
+lookup_I <- function(gene, I){
+if(gene %in% names(I)){
+res = I[gene]
+}
+else{
+res = "NA"
+}
+res
+}
+
+#' @export
+get_Moran_I <- function(lineages, genes){
+out = matrix(nrow = length(genes), ncol = 0)
+for(lineage in lineages){
+load(file = paste("Moran_", lineage,".R", sep = ""))
+I = cds_pr_test_res$morans_I
+names(I) <- rownames(cds_pr_test_res)
+res = sapply(genes, lookup_I, I = I)
+out = cbind(out, res)
+}
+colnames(out) <- lineages
+out
+}
+
 #' @export
 calc_dist <- function(lineage1, lineage2, pt_genes = FALSE, dist_method = "CORT", q = 0.05, I = 0.15, adjust = F, cores = 1){
 if(pt_genes == FALSE){

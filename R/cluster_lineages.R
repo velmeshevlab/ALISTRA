@@ -106,7 +106,7 @@ input = paste0("fit = ",cds_name,"@expectation$", lineage)
 eval(parse(text=input))
 colnames(fit) <- toupper(colnames(fit))
 fit = fit[,colnames(fit)%in%pt_genes]
-colnames(fit) <- paste(lineage, colnames(fit), sep = "_")
+colnames(fit) <- paste(lineage, colnames(fit), sep = "__")
 fit.comb = cbind(fit.comb, fit)
 }
 fit.comb = apply(fit.comb, 2, as.numeric)

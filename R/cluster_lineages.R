@@ -2,7 +2,7 @@ prep_mat <- function(gene, mat){
 name = paste0(lineage, "__", gene)
 cols = colnames(mat)[grepl(paste0("__", gene), colnames(mat))]
 res = mat[name,cols]
-res
+unlist(res)
 }
 
 #' @export
@@ -12,6 +12,7 @@ res = sapply(genes, prep_mat, mat = d)
 colnames(res) <- gsub(paste0("__", genes[1]), "", colnames(res))
 res
 }
+
 
 lookup_I <- function(gene, I){
 if(gene %in% names(I)){

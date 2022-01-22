@@ -9,10 +9,10 @@ unlist(res)
 get_distance <- function(lineage, genes){
 d = read.table("adult_dist_mat.txt", sep="\t",header=TRUE,row.names=1,check.names=FALSE)
 res = sapply(genes, prep_mat, mat = d)
+res = t(res)
 colnames(res) <- gsub(paste0("__", genes[1]), "", colnames(res))
 res
 }
-
 
 lookup_I <- function(gene, I){
 if(gene %in% names(I)){

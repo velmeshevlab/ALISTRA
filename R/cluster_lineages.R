@@ -1,3 +1,19 @@
+prep_mat <- function(gene, mat){
+name = paste0(lineage, "__", gene)
+cols = colnames(mat)[grepl(paste0("__", gene), colnames(mat))]
+res = mat[name,cols]
+res
+}
+
+#' @export
+get_distance <- function(lineage, genes){
+d = read.table("adult_dist_mat.txt", sep="\t",header=TRUE,row.names=1,check.names=FALSE)
+res = sapply(genes, prep_mat, mat = d)
+}
+colnames(res) <- gsub(paste0("__", genes[1]), "", colnames(res))
+res
+}
+
 lookup_I <- function(gene, I){
 if(gene %in% names(I)){
 res = I[gene]

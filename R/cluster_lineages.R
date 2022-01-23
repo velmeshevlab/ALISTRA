@@ -1,9 +1,13 @@
 #' @export
-get_lineage_genes <- function(lineage, lineages, exlude_lienage = F, high_I = 0.2, low_I = 0.05){
+get_lineage_genes <- function(lineage, lineages, exlude_lineages = F, high_I = 0.2, low_I = 0.05){
 load(file = paste("Moran_", lineage,".R", sep = ""))
 res = rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= high_I & cds_pr_test_res$q_value < 0.05, ])
 genes_exl = c()
-for(lin in lineages[!(lineages == lineage)]){
+test_lineages = lineages[!(lineages == lineage)]
+if(exlude_lineages != F){
+test_lineages = test_lineages[!(test_lineages %in% exlude_lineages)]
+}
+for(lin in test_lineages){
 load(file = paste("Moran_", lin,".R", sep = ""))
 genes_exl = append(genes_exl, rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= low_I, ]))
 }
@@ -20,6 +24,16 @@ out = cbind(out, I)
 colnames(out) <- lineages
 rownames(out) <- res
 out
+}
+
+#' @export
+get_lineage_genes_multiple <- function(test_lineages, lineages, high_I = 0.2, low_I = 0.05){
+res = rownames(get_lineage_genes(test_lineages[1], lineages, exlude_lineages = test_lineages, high_I = high_I, low_I = low_I))
+for(test_lineage in test_lineages[2:length(test_lineages)]){
+local_res = rownames(get_lineage_genes(test_lineage, lineages, exlude_lineages = test_lineages, high_I = high_I, low_I = low_I))
+res = intersect(res, local_res)
+}
+res
 }
 
 prep_mat <- function(gene, mat){

@@ -1,3 +1,27 @@
+#' @export
+get_lineage_genes <- function(lineage, lineages, exlude_lienage = F, high_I = 0.2, low_I = 0.05){
+load(file = paste("Moran_", lineage,".R", sep = ""))
+res = rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= high_I & cds_pr_test_res$q_value < 0.05, ])
+genes_exl = c()
+for(lin in lineages[!(lineages == lineage)]){
+load(file = paste("Moran_", lin,".R", sep = ""))
+genes_exl = append(genes_exl, rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= low_I, ]))
+}
+genes_exl = unique(genes_exl)
+res = res[!(res %in% intersect(res, genes_exl))]
+out = matrix(nrow = length(res), ncol = 0,)
+for(lin in lineages){
+load(file = paste("Moran_", lin,".R", sep = ""))
+Is = cds_pr_test_res$morans_I
+names(Is) <- rownames(cds_pr_test_res)
+I = sapply(res, lookup_I, I = Is)
+out = cbind(out, I)
+}
+colnames(out) <- lineages
+rownames(out) <- res
+out
+}
+
 prep_mat <- function(gene, mat){
 name = paste0(lineage, "__", gene)
 cols = colnames(mat)[grepl(paste0("__", gene), colnames(mat))]

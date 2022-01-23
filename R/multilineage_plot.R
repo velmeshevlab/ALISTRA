@@ -234,7 +234,9 @@ return(pt)
 #' @export
 plot_multiple <- function(cds, gene, lineages, start, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), colors.mids = c("yellow", "deepskyblue", "darkolivegreen1"), N = 500, legend_position = "right"){
 cds_name = deparse(substitute(cds))
-input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+input = paste0(cds_name,"@expression$", lineages[1])
+N = nrow(eval(parse(text = input)))
+input = paste0("get_lineage_object(",cds_name,", '", lineages[1], "',", start, ")")
 cds_subset = eval(parse(text=input))
 pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
 pt <- as.data.frame(pt)

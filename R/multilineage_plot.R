@@ -233,7 +233,7 @@ return(pt)
 
 #' @export
 plot_multiple <- function(cds, gene, lineages, start, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), colors.mids = c("yellow", "deepskyblue", "darkolivegreen1"), N = 500, legend_position = "right"){
-exp = compress_expression(cds, lineages[1], gene = gene, N)
+exp = compress_expression(cds, lineages[1], start, gene = gene, N)
 pt = exp[,3]
 dd = as.data.frame(pt)
 cols = c("pseudotime")

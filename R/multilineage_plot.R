@@ -233,17 +233,27 @@ return(pt)
 
 #' @export
 plot_multiple <- function(cds, gene, lineages, start, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), colors.mids = c("yellow", "deepskyblue", "darkolivegreen1"), N = 500, legend_position = "right"){
-exp = compress_expression(cds, lineages[1], start, gene = gene, N)
-pt = exp[,3]
-dd = as.data.frame(pt)
+cds_name = deparse(substitute(cds))
+input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+cds_subset = eval(parse(text=input))
+pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+pt <- as.data.frame(pt)
+pt = pt[,1]
+step = ((length(pt)-3)/N)
+pt.comp = SlidingWindow("mean", pt, 3, step)
+max.pt = max(pt.comp)
+dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
 cols = c("pseudotime")
 fits = c()
 for(lineage in lineages){
-exp = compress_expression(cds, lineage, start, gene = gene, N)
-dd = cbind(dd, exp[1:2])
+input = paste0("exp = ",cds_name,"@expression$", lineage,"[,",gene,"]")
+eval(parse(text=input))
+input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,",gene,"]")
+eval(parse(text=input))
+dd = cbind(dd, exp, fit)
 cols = append(cols, paste0("exp_", lineage))
 cols = append(cols, paste0("fit_", lineage))
-fits = c(fits, exp[,2])
+fits = c(fits, fit)
 }
 colnames(dd) <- cols
 ymax = max(fits)

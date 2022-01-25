@@ -80,6 +80,8 @@ input = paste0("cds@expression$", lineage, " <- exp$expression")
 eval(parse(text=input))
 input = paste0("cds@expectation$", lineage, " <- exp$expectation")
 eval(parse(text=input))
+input = paste0("cds@pseudotime$", lineage, " <- exp$pseudotime")
+eval(parse(text=input))
 return(cds)
 }
 

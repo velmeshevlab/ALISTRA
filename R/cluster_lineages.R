@@ -241,16 +241,15 @@ dev.off()
 }
 
 #' @export
-average_curves <- function(d, dis, k, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500){
-tree = hclust(dis, method = "ward.D2")
-clust = cutree(tree, k = k)
-clusters = unique(clust[tree$order])
+average_curves <- function(d, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan")){
+clusters = unique(clust[,1])
+N = ncol(d)
 M = 1
 for(cluster in clusters){
 color = colors[M]
 print(color)
 M = M+1
-sel = d[names(clust[clust == cluster]),]
+sel = d[rownames(clust)[clust[,1] == cluster],]
 sel = (10^sel)-1
 dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(sel)+1))
 dd = as.data.frame(dd)

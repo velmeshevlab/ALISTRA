@@ -241,13 +241,13 @@ dev.off()
 }
 
 #' @export
-average_curves <- function(d, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan")){
+average_curves <- function(d, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan", "blanchedalmond", "coral")){
 clusters = unique(clust[,1])
 N = ncol(d)
 M = 1
 for(cluster in clusters){
 color = colors[M]
-print(color)
+print(cluster)
 M = M+1
 sel = d[rownames(clust)[clust[,1] == cluster],]
 sel = (10^sel)-1

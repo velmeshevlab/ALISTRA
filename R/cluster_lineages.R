@@ -259,6 +259,6 @@ q <- q + geom_line(aes(x = pseudotime, y = average, size = I(5)), color = color)
 q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime")
 q <- q + ylim(-0.02, max(dd$average)) + theme(plot.title = element_text(size = 28, face="bold", hjust = 0.5), axis.text=element_text(size=36), axis.title=element_text(size=40,face="bold"), legend.position = "none")
 q
-ggsave(file=paste(color, ".png",sep=""),width = 8, height = 6, units = "in",  dpi = 600);
+ggsave(file=paste(cluster, ".png",sep=""),width = 8, height = 6, units = "in",  dpi = 600);
 }
 }

@@ -251,10 +251,18 @@ dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
 cols = c("pseudotime")
 fits = c()
 for(lineage in lineages){
+input = paste0("exp = ",cds_name,"@expression$", lineage)
+eval(parse(text=input))
+if(gene %in% colnames(exp)){
 input = paste0("exp = ",cds_name,"@expression$", lineage,"[,'",gene,"']")
 eval(parse(text=input))
 input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
 eval(parse(text=input))
+}
+else{
+exp = rep(0, N)
+fit = rep(0, N)
+}
 dd = cbind(dd, exp, fit)
 cols = append(cols, paste0("exp_", lineage))
 cols = append(cols, paste0("fit_", lineage))

@@ -1,10 +1,10 @@
-get_Is <-  function(res, lineages){
+get_Is <-  function(res, lineages, action){
 out = matrix(nrow = length(res), ncol = 0,)
 for(lin in lineages){
 load(file = paste("Moran_", lin,".R", sep = ""))
 Is = cds_pr_test_res$morans_I
 names(Is) <- rownames(cds_pr_test_res)
-I = sapply(res, lookup_I, I = Is)
+I = sapply(res, lookup_I, I = Is, action = 0)
 out = cbind(out, I)
 }
 colnames(out) <- lineages
@@ -13,29 +13,33 @@ out
 }
 
 #' @export
-get_lineage_genes <- function(lineage, lineages, exlude_lineages = F, high_I = 0.2, low_I = 0.05){
+get_lineage_genes <- function(lineage, lineages, exlude_lineages = F, factor = 4, high_I = 0.1){
 load(file = paste("Moran_", lineage,".R", sep = ""))
-res = rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= high_I & cds_pr_test_res$q_value < 0.05, ])
-genes_exl = c()
+lin.genes = cds_pr_test_res[cds_pr_test_res$morans_I >= high_I & cds_pr_test_res$q_value < 0.05, ]
+lin.genes = lin.genes[,c("morans_I", "q_value")]
 test_lineages = lineages[!(lineages == lineage)]
 if(exlude_lineages != F){
 test_lineages = test_lineages[!(test_lineages %in% exlude_lineages)]
 }
-for(lin in test_lineages){
-load(file = paste("Moran_", lin,".R", sep = ""))
-genes_exl = append(genes_exl, rownames(cds_pr_test_res[cds_pr_test_res$morans_I >= low_I, ]))
+Is = get_Is(rownames(lin.genes), test_lineages, action = 0)
+out = c()
+for(i in nrow(lin.genes){
+test = lin.genes$morans_I[i]
+d = Is[i,]
+res = (d* factor) < test
+res = sum(res == TRUE)
+if(res == length(test_lineages)){
+out = cbind(rownames(Is)[i], out)
 }
-genes_exl = unique(genes_exl)
-res = res[!(res %in% intersect(res, genes_exl))]
-out = get_Is(res, lineages)
+}
 out
 }
 
 #' @export
-get_lineage_genes_multiple <- function(test_lineages, lineages, high_I = 0.2, low_I = 0.05){
-res = rownames(get_lineage_genes(test_lineages[1], lineages, exlude_lineages = test_lineages, high_I = high_I, low_I = low_I))
+get_lineage_genes_multiple <- function(test_lineages, lineages, factor = 4, high_I = 0.1){
+res = rownames(get_lineage_genes(test_lineages[1], lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor))
 for(test_lineage in test_lineages[2:length(test_lineages)]){
-local_res = rownames(get_lineage_genes(test_lineage, lineages, exlude_lineages = test_lineages, high_I = high_I, low_I = low_I))
+local_res = rownames(get_lineage_genes(test_lineage, lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor))
 res = intersect(res, local_res)
 }
 out = get_Is(res, lineages)
@@ -58,12 +62,12 @@ colnames(res) <- gsub(paste0("__", genes[1]), "", colnames(res))
 res
 }
 
-lookup_I <- function(gene, I){
+lookup_I <- function(gene, I, action = "NA"){
 if(gene %in% names(I)){
 res = I[gene]
 }
 else{
-res = "NA"
+res = action
 }
 res
 }

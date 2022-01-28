@@ -29,7 +29,7 @@ d = Is[i,]
 res = (d* factor) < test
 res = sum(res == TRUE)
 if(res == length(test_lineages)){
-out = cbind(rownames(Is)[i], out)
+out = append(rownames(Is)[i], out)
 }
 }
 out

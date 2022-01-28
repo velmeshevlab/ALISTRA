@@ -23,7 +23,7 @@ test_lineages = test_lineages[!(test_lineages %in% exlude_lineages)]
 }
 Is = get_Is(rownames(lin.genes), test_lineages, action = 0)
 out = c()
-for(i in nrow(lin.genes)){
+for(i in 1:nrow(lin.genes)){
 test = lin.genes$morans_I[i]
 d = Is[i,]
 res = (d* factor) < test

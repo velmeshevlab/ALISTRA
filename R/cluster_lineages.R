@@ -37,12 +37,12 @@ out
 
 #' @export
 get_lineage_genes_multiple <- function(test_lineages, lineages, factor = 4, high_I = 0.1){
-res = rownames(get_lineage_genes(test_lineages[1], lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor))
+res = get_lineage_genes(test_lineages[1], lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor)
 for(test_lineage in test_lineages[2:length(test_lineages)]){
-local_res = rownames(get_lineage_genes(test_lineage, lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor))
+local_res = get_lineage_genes(test_lineage, lineages, exlude_lineages = test_lineages, high_I = high_I, factor = factor)
 res = intersect(res, local_res)
 }
-out = get_Is(res, lineages)
+out = get_Is(res, lineages, action = 0)
 out
 }
 

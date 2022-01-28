@@ -273,7 +273,7 @@ ymax = max(fits)
 q <- ggplot(data = dd)
 for(N in 1:length(lineages)){
 loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'),size=I(1))")
-loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey'", "high='",colors[N],"')")
+loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
 loop_input3 = "new_scale_color()"
 loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
 q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))

@@ -245,17 +245,29 @@ dev.off()
 }
 
 #' @export
-average_curves <- function(d, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan", "blanchedalmond", "coral")){
+average_curves <- function(cds, lineages, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan", "blanchedalmond", "coral")){
+cds_name = deparse(substitute(cds))
+input = paste0("fit = ",cds_name,"@expectation$", lineages[1])
+eval(parse(text=input))
+N = nrow(fit)
 clusters = unique(clust)
-N = ncol(d)
 M = 1
 for(cluster in clusters){
-color = colors[M]
 print(cluster)
+res = matrix(nrow = N, ncol = 0,)
+for(lineage in lineages){
+input = paste0("fit = ",cds_name,"@expectation$", lineage)
+eval(parse(text=input))
+clust.sel = clust[clust == cluster]
+gene.names = unlist(strsplit(names(clust.sel),"__"))
+gene.names = unique(gene.names[!(gene.names %in% lineages)])
+fit = fit[,gene.names %in% colnames(fit)]
+res = cbind(res, fit)
+}
+color = colors[M]
 M = M+1
-sel = d[names(clust)[clust == cluster],]
-sel = (10^sel)-1
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(sel)+1))
+res = (10^res)-1
+dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(res)+1))
 dd = as.data.frame(dd)
 colnames(dd) <- c("pseudotime", "average")
 q <- ggplot(data = dd)

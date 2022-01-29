@@ -246,14 +246,14 @@ dev.off()
 
 #' @export
 average_curves <- function(d, clust, colors = c("red", "green", "blue", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan", "blanchedalmond", "coral")){
-clusters = unique(clust[,1])
+clusters = unique(clust)
 N = ncol(d)
 M = 1
 for(cluster in clusters){
 color = colors[M]
 print(cluster)
 M = M+1
-sel = d[rownames(clust)[clust[,1] == cluster],]
+sel = d[names(clust)[clust == cluster],]
 sel = (10^sel)-1
 dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(sel)+1))
 dd = as.data.frame(dd)

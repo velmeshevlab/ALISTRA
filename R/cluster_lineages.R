@@ -261,7 +261,7 @@ eval(parse(text=input))
 clust.sel = clust[clust == cluster]
 gene.names = unlist(strsplit(names(clust.sel),"__"))
 gene.names = unique(gene.names[!(gene.names %in% lineages)])
-fit = fit[,gene.names %in% colnames(fit)]
+fit = fit[,gene.names[gene.names %in% colnames(fit)]]
 res = cbind(res, fit)
 }
 color = colors[M]

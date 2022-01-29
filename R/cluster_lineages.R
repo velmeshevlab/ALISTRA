@@ -254,14 +254,16 @@ color = colors[M]
 print(cluster)
 M = M+1
 sel = d[names(clust)[clust == cluster],]
-sel = (10^sel)-1
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(sel)+1))
+pt = seq(from=0, to=25, by = (25/N)+0.0001)
+fit = fit.m3(colMeans(sel), pt, max(pt))
+dd = cbind(pt, fit)
 dd = as.data.frame(dd)
 colnames(dd) <- c("pseudotime", "average")
 q <- ggplot(data = dd)
 q <- q + geom_line(aes(x = pseudotime, y = average, size = I(5)), color = color)
 q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime")
-q <- q + ylim(-0.02, max(dd$average)) + theme(plot.title = element_text(size = 28, face="bold", hjust = 0.5), axis.text=element_text(size=36), axis.title=element_text(size=40,face="bold"), legend.position = "none")
+q <- q + ylim(y = c(0,max(fit))) + theme(plot.title = element_text(size = 28, face="bold", hjust = 0.5), axis.text=element_text(size=36), axis.title=element_text(size=40,face="bold"), legend.position = "none")
+q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
 q
 ggsave(file=paste(cluster, ".png",sep=""),width = 8, height = 6, units = "in",  dpi = 600);
 }

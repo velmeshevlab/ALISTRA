@@ -267,7 +267,7 @@ res = cbind(res, fit)
 color = colors[M]
 M = M+1
 res = (10^res)-1
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(colMeans(res)+1))
+dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(rowMeans(res)+1))
 dd = as.data.frame(dd)
 colnames(dd) <- c("pseudotime", "average")
 q <- ggplot(data = dd)

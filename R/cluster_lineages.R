@@ -16,12 +16,15 @@ AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_rat
       top = max(fit)
       res = c()
       for(i in 1:N){
+        if(!(is.na(top))){
           if(fit.sel[i] > top*factor){
             res = append(res, TRUE)
           }
           else{
             res = append(res, FALSE)
           }
+          }
+        else{res = append(res, TRUE)}
         }
       res = rle(res)$lengths[rle(res)$values==TRUE]
       if(any(res > window))

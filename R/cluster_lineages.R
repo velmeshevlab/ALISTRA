@@ -1,4 +1,42 @@
 #' @export
+AUC_window_sub_simple <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
+  cds_name = deparse(substitute(cds))
+  input = paste0("fit = ",cds_name,"@expectation$", lineage)
+  eval(parse(text=input))
+  fit.sel = fit[,gene]
+  N = length(fit.sel)
+  window = N*window_ratio
+  out = c()
+  top = 0
+  for(lin in comp_lineages){
+    cds_name = deparse(substitute(cds))
+    input = paste0("fit = ",cds_name,"@expectation$", lin)
+    eval(parse(text=input))
+    if(gene %in% colnames(fit) & !(is.na(fit[,gene]))){
+    fit = fit[,gene]
+    top = max(fit, top)
+    }
+  }
+      res = c()
+      for(i in 1:N){
+          if(fit.sel[i] > top*factor){
+            res = append(res, TRUE)
+          }
+          else{
+            res = append(res, FALSE)
+          }
+        }
+      res = rle(res)$lengths[rle(res)$values==TRUE]
+      if(any(res > window))
+      {
+        TRUE
+      }
+      else{
+        FALSE
+      }
+    }
+
+#' @export
 AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)

@@ -1,3 +1,20 @@
+#' @export
+get_dist <- function(genes, lineage, lineages, dist)
+out = sapply(genes, get_dist_sub, lineage = lineage, lineages = lineages, dist = dist)
+
+get_dist_sub <- function(gene, lineage, lineages, dist){
+gene.name = paste0(lineage, "__", gene)
+dist.sel = dist[gene.name,]
+dist.sel = dist.sel[names(dist.sel) %in% paste0(lineages, "__", gene)]
+names(dist.sel) <- gsub(paste0("__", gene), "", names(dist.sel))
+if(length(dist.sel) != length(lineages)){
+dist.sel = rep(0, length(lineages))
+names(dist.sel) <- lineages
+}
+dist.sel
+}
+
+#' @export
 get_Is <-  function(res, lineages, action){
 out = matrix(nrow = length(res), ncol = 0,)
 for(lin in lineages){

@@ -1,4 +1,53 @@
 #' @export
+AUC_window_sub <- function(gene, cds, fit.sel, comp_lineages, factor1, window_ratio1, factor2, window_ratio2){
+  N = length(fit.sel)
+  window1 = N*window_ratio1
+  window2 = N*window_ratio2
+  out = c()
+  for(lin in comp_lineages){
+    cds_name = deparse(substitute(cds))
+    input = paste0("fit = ",cds_name,"@expectation$", lin)
+    eval(parse(text=input))
+    if(gene %in% colnames(fit)){
+      fit = fit[,gene]
+      res = c()
+      for(i in 1:N){
+        if(!is.na(fit[i])){
+          if(fit.sel[i] > fit[i]*factor1){
+            res = append(res, 1)
+          }
+          else if(fit[i] > fit.sel[i]*factor2){
+            res = append(res, 2)
+          }
+          else{
+            res = append(res, 3)
+          }
+        }
+        else{res = append(res, 1)}
+      }
+      res1 = rle(res)$lengths[rle(res)$values==1]
+      res2 = rle(res)$lengths[rle(res)$values==2]
+      if(any(res1 > window1) & !(any(res2 > window2)))
+      {
+        out = append(out, TRUE)
+      }
+      else{
+        out = append(out, FALSE)
+      }
+    }
+    else{
+      out = append(out, TRUE)
+    }
+  }
+  if(sum(out == TRUE) == length(comp_lineages)){
+    TRUE
+  }
+  else{
+    FALSE
+  }
+}
+
+#' @export
 get_dist <- function(genes, lineage, lineages, dist)
 out = sapply(genes, get_dist_sub, lineage = lineage, lineages = lineages, dist = dist)
 

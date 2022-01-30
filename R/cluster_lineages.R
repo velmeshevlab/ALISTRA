@@ -1,8 +1,7 @@
 #' @export
-AUC_window_sub <- function(gene, cds, fit.sel, comp_lineages, factor1, window_ratio1, factor2, window_ratio2){
+AUC_window_sub <- function(gene, cds, fit.sel, comp_lineages, factor, window_ratio){
   N = length(fit.sel)
-  window1 = N*window_ratio1
-  window2 = N*window_ratio2
+  window = N*window_ratio
   out = c()
   for(lin in comp_lineages){
     cds_name = deparse(substitute(cds))
@@ -10,24 +9,18 @@ AUC_window_sub <- function(gene, cds, fit.sel, comp_lineages, factor1, window_ra
     eval(parse(text=input))
     if(gene %in% colnames(fit)){
       fit = fit[,gene]
+      top = max(fit)
       res = c()
       for(i in 1:N){
-        if(!is.na(fit[i])){
-          if(fit.sel[i] > fit[i]*factor1){
-            res = append(res, 1)
-          }
-          else if(fit[i] > fit.sel[i]*factor2){
-            res = append(res, 2)
+          if(fit.sel[i] > top*factor){
+            res = append(res, TRUE)
           }
           else{
-            res = append(res, 3)
+            res = append(res, FALSE)
           }
         }
-        else{res = append(res, 1)}
-      }
-      res1 = rle(res)$lengths[rle(res)$values==1]
-      res2 = rle(res)$lengths[rle(res)$values==2]
-      if(any(res1 > window1) & !(any(res2 > window2)))
+      res = rle(res)$lengths[rle(res)$values==TRUE]
+      if(any(res > window))
       {
         out = append(out, TRUE)
       }

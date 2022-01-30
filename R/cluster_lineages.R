@@ -1,5 +1,5 @@
 #' @export
-AUC_window_sub_simple <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
+AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)
   eval(parse(text=input))
@@ -37,7 +37,7 @@ AUC_window_sub_simple <- function(gene, cds, lineage, comp_lineages, factor, win
     }
 
 #' @export
-AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
+AUC_window_sub_complex <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)
   eval(parse(text=input))
@@ -45,45 +45,34 @@ AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_rat
   N = length(fit.sel)
   window = N*window_ratio
   out = c()
-  for(lin in comp_lineages){
-    cds_name = deparse(substitute(cds))
-    input = paste0("fit = ",cds_name,"@expectation$", lin)
-    eval(parse(text=input))
-    if(gene %in% colnames(fit)){
-      fit = fit[,gene]
-      top = max(fit)
-      res = c()
+  res = c()
       for(i in 1:N){
-        if(!(is.na(top))){
+        top = 0
+        for(lin in comp_lineages){
+          cds_name = deparse(substitute(cds))
+          input = paste0("fit = ",cds_name,"@expectation$", lin)
+          eval(parse(text=input))
+          if(gene %in% colnames(fit) & !(is.na(fit[,gene]))){
+            fit = fit[,gene]
+            top = max(fit[i], top)
+          }
+        }
           if(fit.sel[i] > top*factor){
             res = append(res, TRUE)
           }
           else{
             res = append(res, FALSE)
           }
-          }
-        else{res = append(res, TRUE)}
         }
       res = rle(res)$lengths[rle(res)$values==TRUE]
       if(any(res > window))
       {
-        out = append(out, TRUE)
+        TRUE
       }
       else{
-        out = append(out, FALSE)
+        FALSE
       }
     }
-    else{
-      out = append(out, TRUE)
-    }
-  }
-  if(sum(out == TRUE) == length(comp_lineages)){
-    TRUE
-  }
-  else{
-    FALSE
-  }
-}
 
 #' @export
 get_dist <- function(genes, lineage, lineages, dist)

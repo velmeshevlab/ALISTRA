@@ -1,5 +1,9 @@
 #' @export
-AUC_window_sub <- function(gene, cds, fit.sel, comp_lineages, factor, window_ratio){
+AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
+  cds_name = deparse(substitute(cds))
+  input = paste0("fit = ",cds_name,"@expectation$", lineage)
+  eval(parse(text=input))
+  fit.sel = fit[,gene]
   N = length(fit.sel)
   window = N*window_ratio
   out = c()

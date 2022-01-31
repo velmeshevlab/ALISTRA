@@ -8,28 +8,36 @@ AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_rat
   window = N*window_ratio
   out = c()
   top = 0
+  mat = matrix(nrow = N, ncol = 0, )
   for(lin in comp_lineages){
     cds_name = deparse(substitute(cds))
     input = paste0("fit = ",cds_name,"@expectation$", lin)
     eval(parse(text=input))
     if(gene %in% colnames(fit) & !(is.na(fit[,gene]))){
     fit = fit[,gene]
+    mat = cbind(mat, fit)
     top = max(fit, top)
     }
   }
       res = c()
+      score = c()
       for(i in 1:N){
           if(fit.sel[i] > top*factor){
-            res = append(res, TRUE)
+            res = append(res, 1)
           }
           else{
-            res = append(res, FALSE)
+            res = append(res, 0)
           }
+          score = append(score, fit.sel[i]-max(mat[i,]))
         }
-      res = rle(res)$lengths[rle(res)$values==TRUE]
+      target = paste(res,collapse="")
+      res = rle(res)$lengths[rle(res)$values==1]
       if(any(res > window))
       {
-        TRUE
+        search = paste(rep(1, max(rle(res)$values)),collapse="")
+        index = gregexpr(pattern = search, target)[[1]][1]
+        score = sum(score[index:(index+max(rle(res)$values))-1])/top
+        score
       }
       else{
         FALSE

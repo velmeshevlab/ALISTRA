@@ -3,7 +3,6 @@ annotate_gene_peaks_sub <- function(gene, d, cells, age){
 exp_age = cbind(d[gene,cells], age[cells,])
 colnames(exp_age)[1] <- "exp"
 res = exp_age[exp_age$exp == max(exp_age$exp),]
-rownames(res) <- gene
 t(res)
 }
 

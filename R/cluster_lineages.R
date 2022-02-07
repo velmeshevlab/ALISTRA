@@ -1,4 +1,23 @@
 #' @export
+annotate_gene_peaks_sub <- function(gene, d, cells, age){
+exp_age = cbind(d[gene,cells], age[cells,])
+colnames(exp_age)[1] <- "exp"
+res = exp_age[exp_age$exp == max(exp_age$exp),]
+rownames(res) <- gene
+t(res)
+}
+
+#' @export
+annotate_gene_peaks <- function(data, cds, genes, lineage, age){
+d = GetAssayData(object = data, assay = "RNA", slot = "data")
+cds_name = deparse(substitute(cds))
+input = paste0("cells = ",cds_name,"@lineages$", lineage)
+eval(parse(text=input))
+res = lapply(genes, annotate_gene_peaks_sub, d = d, cells = cells, age = age)
+res
+}
+
+#' @export
 AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_ratio){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)

@@ -15,7 +15,7 @@ d = GetAssayData(object = data, assay = "RNA", slot = "data")
 cds_name = deparse(substitute(cds))
 input = paste0("cells = ",cds_name,"@lineages$", lineage)
 eval(parse(text=input))
-res = lapply(genes, annotate_gene_peaks_sub, d = d, cells = cells, age = age)
+res = sapply(genes, annotate_gene_peaks_sub, d = d, cells = cells, age = age)
 res
 }
 

@@ -6,7 +6,7 @@ colnames(exp_age)[1] <- "exp"
 res = exp_age[exp_age$exp == max(exp_age$exp),]
 res = res[1,]
 rownames(res) <- gene
-t(res)
+res
 }
 
 #' @export

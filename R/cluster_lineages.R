@@ -3,7 +3,7 @@ annotate_gene_peaks_sub <- function(gene, d, cells, age){
 exp_age = cbind(d[gene,cells], age[cells,])
 colnames(exp_age)[1] <- "exp"
 res = exp_age[exp_age$exp >= quantile(exp_age$exp, 0.95),]
-res = c(Mode(exp_age$age_range), mean(exp_age$age_num))
+res = c(Mode(res$age_range), mean(res$age_num))
 names(res) <- c("age_range", "age_num")
 res
 }

@@ -1,4 +1,34 @@
 #' @export
+get_max_age_sub <- function(gene, fit, pt.comp, age.comp){
+fit = fit[,gene]
+res = cbind(fit, pt.comp, age.comp)
+colnames(res) <- c("exp", "pt", "age")
+res = as.data.frame(res)
+age_max = res[res$exp == max(res$exp),3]
+age_range = age[which.min(abs(age$age_num - age_max)),1]
+age_range
+}
+
+#' @export
+get_max_age <- function(cds, genes, lineage, age){
+cds_name = deparse(substitute(cds))
+input = paste0("fit = ",cds_name,"@expectation$", lineage)
+eval(parse(text=input))
+N = nrow(fit)
+age = meta[,c("age_range", "age_num")]
+input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+cds_subset = eval(parse(text=input))
+pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+pt = pt[order(pt)]
+step = ((length(pt)-3)/N)
+pt.comp = SlidingWindow("mean", pt, 3, step)
+age_sel = age[names(pt), 2]
+age.comp = SlidingWindow("mean", age_sel, 3, step)
+res = pbsapply(genes, get_max_age_sub, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
+res
+}
+
+#' @export
 annotate_gene_peaks_sub <- function(gene, d, cells, age){
 exp_age = cbind(d[gene,cells], age[cells,])
 colnames(exp_age)[1] <- "exp"

@@ -10,7 +10,7 @@ age_range
 }
 
 #' @export
-get_max_age <- function(cds, genes, lineage, age){
+get_max_age <- function(cds, genes, lineage, start){
 cds_name = deparse(substitute(cds))
 input = paste0("fit = ",cds_name,"@expectation$", lineage)
 eval(parse(text=input))

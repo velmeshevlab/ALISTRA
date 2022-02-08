@@ -1,5 +1,5 @@
 #' @export
-get_max_age_sub <- function(gene, fit, pt.comp, age.comp){
+get_max_age_sub <- function(gene, age, fit, pt.comp, age.comp){
 fit = fit[,gene]
 res = cbind(fit, pt.comp, age.comp)
 colnames(res) <- c("exp", "pt", "age")
@@ -27,7 +27,7 @@ step = ((length(pt)-3)/N)
 pt.comp = SlidingWindow("mean", pt, 3, step)
 age_sel = age[names(pt), 2]
 age.comp = SlidingWindow("mean", age_sel, 3, step)
-res = pbsapply(genes, get_max_age_sub, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
+res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
 res
 }
 

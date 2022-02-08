@@ -10,7 +10,7 @@ age_range
 }
 
 #' @export
-get_max_age <- function(cds, genes = FALSE, lineage, start){
+get_max_age <- function(cds, meta, genes = FALSE, lineage, start){
 if(genes == FALSE){
 genes = as.character(rownames(read.table(paste0(lineage, "_spec.txt"), sep = "\t")))
 }

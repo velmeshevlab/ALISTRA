@@ -409,7 +409,7 @@ print(cluster)
 M = M+1
 sel = d[names(clust)[clust == cluster],]
 factors = rowMeans(sel)/max(rowMeans(sel))
-sel = sweep(sel, MARGIN = 1, factors, '*')
+sel = sweep(sel, MARGIN = 1, factors, '/')
 pt = seq(from=0, to=25, by = (25/N)+0.0001)
 fit = fit.m3(colMeans(sel), pt, max(pt))
 dd = cbind(pt, fit)

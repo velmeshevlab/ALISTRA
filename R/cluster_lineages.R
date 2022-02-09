@@ -15,12 +15,12 @@ else{
 c("plateau",age_range)
 }
 }
-else if(length(max) == 0){
+else if(length(max) == 0 & length(min) == 0){
 c("steady","Adult")
 }
 else if(length(min) > 0 & length(max) > 0){
 if(min < max){
-c("steady","Adult")
+c("burst","Adult")
 }
 else{
 age_max = min(age.comp[max])

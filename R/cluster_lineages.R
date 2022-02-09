@@ -18,7 +18,7 @@ c("plateau",age_range)
 else if(length(locmax) == 0 & length(locmin) == 0){
 c("steady","Adult")
 }
-else if(length(locmin) > 0 & length(locmax) > 0){
+else if(length(locmin) > 0 & length(locmax) == 0){
 if(locmin < locmax){
 c("burst","Adult")
 }

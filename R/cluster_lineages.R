@@ -29,7 +29,7 @@ c("biphasic",age_range)
 }
 }
 else{
-"other"
+c("other","Adult")
 }
 }
 

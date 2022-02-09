@@ -1,5 +1,5 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.5){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
@@ -8,41 +8,37 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.5){
   if(length(locmax) == 0 & length(locmin) == 0){
     c("steady","Adult")
   }
-    else if(length(locmin) > 0 & length(locmax) == 0){
-      age_max = max(age.comp[locmin])
-      age_range = age[which.min(abs(age$age_num - age_max)),1]
-      c("burst",age_range)
-    }
-    else if(length(locmax) == 1){
-      age_max = max(age.comp[locmax])
-      age_range = age[which.min(abs(age$age_num - age_max)),1]
-      if(fit[locmax]*factor > min(fit[locmax:length(fit)])){
+  else if(length(locmin) > 0 & length(locmax) == 0){
+    age_max = max(age.comp[locmin])
+    age_range = age[which.min(abs(age$age_num - age_max)),1]
+    c("burst",age_range)
+  }
+  else if(length(locmax) == 1){
+    age_max = max(age.comp[locmax])
+    age_range = age[which.min(abs(age$age_num - age_max)),1]
+    if(length(locmin) > 0){
+      if(locmin > locmax){
+        if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit[locmin:length(fit)]) > factor){
+          c("biphasic",age_range)
+        }
+        else{c("plateau",age_range)}
+      }
+      else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
         c("transient",age_range)
       }
-      else{
-        if(length(locmin) == 0){
-        c("plateau",age_range)
-        }
-        else if(locmin<locmax){
-        c("plateau",age_range)
-        }
-        else{
-          if(fit[locmax]*factor <= max(fit[locmin:length(fit)])){
-            c("biphasic",age_range)
-          }
-          else{c("plateau",age_range)}
-        }
-      }
+      else{c("plateau",age_range)}
     }
-    else if(length(locmax) > 1){
-      age_max = min(age.comp[locmax])
-      age_range = age[which.min(abs(age$age_num - age_max)),1]
-      c("biphasic",age_range)
+    else{c("transient",age_range)}
     }
-      else{
-        c("other","Adult")
-      }
-    }
+  else if(length(locmax) > 1){
+    age_max = min(age.comp[locmax])
+    age_range = age[which.min(abs(age$age_num - age_max)),1]
+    c("biphasic",age_range)
+  }
+  else{
+    c("other","Adult")
+  }
+}
       
 #' @export
 get_max_age_sub <- function(gene, age, fit, pt.comp, age.comp){

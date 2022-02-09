@@ -1,4 +1,19 @@
 #' @export
+phase_sub <- function(gene, fit){
+fit = fit[,gene]
+min = rollapply(d, 3, function(x) which.min(x)==2)
+min = which(min == TRUE)
+max = rollapply(d, 3, function(x) which.max(x)==2)
+max = which(max == TRUE)
+if(length(max) == 1 & length(min) == 0){
+"transient"
+}
+else{
+"other"
+}
+}
+
+#' @export
 get_max_age_sub <- function(gene, age, fit, pt.comp, age.comp){
 fit = fit[,gene]
 res = cbind(fit, pt.comp, age.comp)
@@ -28,6 +43,7 @@ pt.comp = SlidingWindow("mean", pt, 3, step)
 age_sel = age[names(pt), 2]
 age.comp = SlidingWindow("mean", age_sel, 3, step)
 res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
+res2 = pbsapply(genes, phase_sub, fit = fit)
 res
 }
 

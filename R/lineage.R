@@ -15,6 +15,7 @@
 #' @import viridis
 #' @import speedglm
 #' @import parallel
+#' @import zoo
 
 monocle_theme_opts <- function()
 {

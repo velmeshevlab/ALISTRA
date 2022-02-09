@@ -28,7 +28,11 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
       }
       else{c("plateau",age_range)}
     }
-    else{c("transient",age_range)}
+    else{if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
+      c("transient",age_range)
+    }
+    else{c("plateau",age_range)}
+    }
     }
   else if(length(locmax) > 1){
     age_max = min(age.comp[locmax])

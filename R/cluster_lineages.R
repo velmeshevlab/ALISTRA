@@ -1,5 +1,5 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
 fit = fit[,gene]
 min = rollapply(fit, 3, function(x) which.min(x)==2)
 min = which(min == TRUE)
@@ -8,7 +8,12 @@ max = which(max == TRUE)
 if(length(max) == 1 & length(min) == 0){
 age_max = max(age.comp[max])
 age_range = age[which.min(abs(age$age_num - age_max)),1]
+if(fit[max]*factor > fit[min]){
 c("transient",age_range)
+}
+else{
+c("plateau",age_range)
+}
 }
 else if(length(max) == 0){
 c("steady","Adult")

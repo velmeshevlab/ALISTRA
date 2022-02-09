@@ -6,14 +6,16 @@ min = which(min == TRUE)
 max = rollapply(fit, 3, function(x) which.max(x)==2)
 max = which(max == TRUE)
 if(length(max) == 1 & length(min) == 0){
-c("transient","NA")
+age_max = max(age.comp[max])
+age_range = age[which.min(abs(age$age_num - age_max)),1]
+c("transient",age_range)
 }
 else if(length(max) == 0){
-c("steady","NA")
+c("steady","Adult")
 }
 else if(length(min) > 0 & length(max) > 0){
 if(min < max){
-c("steady","NA")
+c("steady","Adult")
 }
 else{
 age_max = min(age.comp[max])
@@ -55,8 +57,8 @@ step = ((length(pt)-3)/N)
 pt.comp = SlidingWindow("mean", pt, 3, step)
 age_sel = age[names(pt), 2]
 age.comp = SlidingWindow("mean", age_sel, 3, step)
-res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
-res2 = pbsapply(genes, phase_sub, fit = fit, age = age, age.comp = age.comp)
+#res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
+res = pbsapply(genes, phase_sub, fit = fit, age = age, age.comp = age.comp)
 res
 }
 

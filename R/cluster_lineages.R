@@ -1,5 +1,5 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.5){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
@@ -20,7 +20,18 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
         c("transient",age_range)
       }
       else{
+        if(length(locmin) == 0){
         c("plateau",age_range)
+        }
+        else if(locmin<locmax){
+        c("plateau",age_range)
+        }
+        else{
+          if(fit[locmax]*factor <= max(fit[locmin:length(fit)])){
+            c("biphasic",age_range)
+          }
+          else{c("plateau",age_range)}
+        }
       }
     }
     else if(length(locmax) > 1){

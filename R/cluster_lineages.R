@@ -8,8 +8,16 @@ max = which(max == TRUE)
 if(length(max) == 1 & length(min) == 0){
 "transient"
 }
-else if(length(max) == 0 & length(min) == 0|min < max){
+else if(length(max) == 0 & length(min) == 0){
 "steady"
+}
+else if(length(min) > 0 & length(max) > 0){
+if(min < max){
+"steady"
+}
+else{
+"biphasic"
+}
 }
 else{
 "other"

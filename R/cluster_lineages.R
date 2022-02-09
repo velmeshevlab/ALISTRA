@@ -18,7 +18,7 @@ c("steady","NA")
 else{
 age_max = min(age.comp[max])
 age_range = age[which.min(abs(age$age_num - age_max)),1]
-c("biphasic","NA")
+c("biphasic",age_range)
 }
 }
 else{

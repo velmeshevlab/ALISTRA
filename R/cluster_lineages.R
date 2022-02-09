@@ -1,9 +1,9 @@
 #' @export
 phase_sub <- function(gene, fit){
 fit = fit[,gene]
-min = rollapply(d, 3, function(x) which.min(x)==2)
+min = rollapply(fit, 3, function(x) which.min(x)==2)
 min = which(min == TRUE)
-max = rollapply(d, 3, function(x) which.max(x)==2)
+max = rollapply(fit, 3, function(x) which.max(x)==2)
 max = which(max == TRUE)
 if(length(max) == 1 & length(min) == 0){
 "transient"

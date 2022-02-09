@@ -8,7 +8,7 @@ max = which(max == TRUE)
 if(length(max) == 1 & length(min) == 0){
 "transient"
 }
-else if(length(max) == 0 & length(min) == 0){
+else if(length(max) == 0 & length(min) == 0|min < max){
 "steady"
 }
 else{

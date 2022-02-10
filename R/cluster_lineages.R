@@ -1,25 +1,40 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.2){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
   locmax = rollapply(fit, 3, function(x) which.max(x)==2)
   locmax = which(locmax == TRUE)
+  #if there are no local minima or maxima - steady increase
   if(length(locmax) == 0 & length(locmin) == 0){
     c("steady","Adult")
   }
+  #if there are no local maxima or but there is a minimum - burst increase
   else if(length(locmin) > 0 & length(locmax) == 0){
     age_max = max(age.comp[locmin])
     age_range = age[which.min(abs(age$age_num - age_max)),1]
     c("burst",age_range)
   }
+  #if there are local maxima, there are several situations
   else if(length(locmax) == 1){
     age_max = max(age.comp[locmax])
     age_range = age[which.min(abs(age$age_num - age_max)),1]
+    #if there is a local min, can be burst, plateau or biphasic
     if(length(locmin) > 0){
+      #if there is a local min after local max
       if(locmin > locmax){
+        #if there is at least 20% increase of exp after local min
         if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit[locmin:length(fit)]) > factor){
+          #special case: there is a local min and max, but the curve looks almost flat since there is a huge increase of exp after local min
+          age_max = max(age.comp[locmin])
+          age_range = age[which.min(abs(age$age_num - age_max)),1]
+          if(max(fit) > fit[locmax]*factor2){
+          c("burst",age_range)
+        }
+        #otherwise, it's a biphasic curve
+        else{
           c("biphasic",age_range)
+        }
         }
         else{c("plateau",age_range)}
       }

@@ -25,16 +25,16 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
       if(locmin > locmax){
         #if there is at least 20% increase of exp after local min
         if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit[locmin:length(fit)]) > factor){
-          #special case: there is a local min and max, but the curve looks almost flat since there is a huge increase of exp after local min
+          #if there are two significant bends, it is a biphasic curve
           age_max = max(age.comp[locmin])
           age_range = age[which.min(abs(age$age_num - age_max)),1]
-          if(max(fit) > fit[locmax]*factor2){
-          c("burst",age_range)
-        }
-        #otherwise, it's a biphasic curve
-        else{
-          c("biphasic",age_range)
-        }
+          if((fit[locmax] - min(fit)) > (max(fit[locmin:length(fit)]) - fit[locmin])*factor){
+            c("biphasic",age_range)
+          }
+          #otherwise, it's a burst curve
+          else{
+            c("burst",age_range)
+          }
         }
         else{c("plateau",age_range)}
       }
@@ -46,9 +46,9 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
     else{if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
       c("transient",age_range)
     }
-    else{c("plateau",age_range)}
+      else{c("plateau",age_range)}
     }
-    }
+  }
   else if(length(locmax) > 1){
     age_max = min(age.comp[locmax])
     age_range = age[which.min(abs(age$age_num - age_max)),1]

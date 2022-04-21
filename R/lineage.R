@@ -160,12 +160,15 @@ eval(parse(text=input))
 return(cds)
 }
 
-get_lineage_object <- function(cds, lineage, start, N = FALSE)
+get_lineage_object <- function(cds, lineage, start, N = FALSE, cells = FALSE)
 {
 input = paste0("sub.graph = cds@graphs$", lineage)
 eval(parse(text=input))
 input = paste0("sel.cells = cds@lineages$", lineage)
 eval(parse(text=input))
+if(cells != FALSE){
+sel.cells = sel.cells[sel.cells %in% cells]
+}
 nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
 if(N != FALSE){
 sel.cells = sample(sel.cells, N)

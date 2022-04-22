@@ -74,7 +74,7 @@ as_matrix <- function(mat){
 }
 
 #' @export
-compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
+compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F, cells = FALSE){
 exp = compress_expression(cds, lineage, start=start, gene = gene, N = N, cores = cores)
 input = paste0("cds@expression$", lineage, " <- exp$expression")
 eval(parse(text=input))

@@ -160,12 +160,17 @@ eval(parse(text=input))
 return(cds)
 }
 
-get_lineage_object <- function(cds, lineage, start, N = FALSE, cells = FALSE)
+get_lineage_object <- function(cds, lineage = FALSE, start, N = FALSE, cells = FALSE)
 {
+if(lineage != FALSE){
 input = paste0("sub.graph = cds@graphs$", lineage)
 eval(parse(text=input))
 input = paste0("sel.cells = cds@lineages$", lineage)
 eval(parse(text=input))
+}
+else{
+sel.cells = cells
+}
 if(cells != FALSE){
 sel.cells = sel.cells[sel.cells %in% cells]
 }

@@ -162,10 +162,11 @@ return(cds)
 
 get_lineage_object <- function(cds, lineage = FALSE, start, N = FALSE, cells = FALSE)
 {
+cds_name = deparse(substitute(cds))
 if(lineage != FALSE){
-input = paste0("sub.graph = cds@graphs$", lineage)
+input = paste0("sub.graph = ",cds_name,"@graphs$", lineage)
 eval(parse(text=input))
-input = paste0("sel.cells = cds@lineages$", lineage)
+input = paste0("sel.cells = ",cds_name,"@lineages$", lineage)
 eval(parse(text=input))
 }
 else{

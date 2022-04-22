@@ -92,7 +92,7 @@ if(cores != F){
 cl <- makeCluster(cores)
 clusterEvalQ(cl, c(library(evobiR)))
 }
-input = paste0("get_lineage_object(",cds_name,", lineage = '", lineage, "', start = ", start, "', cells = ", cells, ")")
+input = paste0("get_lineage_object(",cds_name,", lineage = '", lineage, "', start = ", start, ', cells = cells',")")
 cds_subset = eval(parse(text=input))
 family = stats::quasipoisson()
 model = "expression ~ splines::ns(pseudotime, df=3)"

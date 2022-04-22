@@ -181,6 +181,9 @@ sel.cells = sample(sel.cells, N)
 #subset the moncole object
 cds_subset = cds[,sel.cells]
 #set the graph, node and cell UMAP coordinates
+if(lineage == FALSE){
+sub.graph = principal_graph(cds_subset)[["UMAP"]]
+}
 principal_graph(cds_subset)[["UMAP"]] <- sub.graph
 cds_subset@principal_graph_aux[["UMAP"]]$dp_mst <- nodes_UMAP[,names(V(sub.graph))]
 cds_subset@clusters[["UMAP"]]$partitions <- cds_subset@clusters[["UMAP"]]$partitions[colnames(cds_subset)]

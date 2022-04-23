@@ -175,7 +175,9 @@ sel.cells = colnames(cds)
 sel.cells = sel.cells[sel.cells %in% colnames(cds)]
 nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
 if(N != FALSE){
+if(N > length(sel.cells)){
 sel.cells = sample(sel.cells, N)
+}
 }
 #subset the moncole object
 cds_subset = cds[,sel.cells]

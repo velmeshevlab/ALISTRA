@@ -90,7 +90,7 @@ input = paste0(cds_name, "@expectation$", lineage, " <- exp$expectation")
 eval(parse(text=input))
 input = paste0(cds_name, "@pseudotime$", lineage, " <- exp$pseudotime")
 eval(parse(text=input))
-return(cds)
+return(parse(text=cds_name))
 }
 
 #' @export

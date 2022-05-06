@@ -82,6 +82,7 @@ input = paste0("compress_expression(",cds_name,", lineage = '", lineage, "', sta
 else{
 input = paste0("compress_expression(",cds_name,", lineage = '", lineage, "', start = ", start, ", gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
 }
+print(input)
 exp = eval(parse(text=input))
 input = paste0(cds_name, "@expression$", lineage, " <- exp$expression")
 eval(parse(text=input))

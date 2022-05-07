@@ -74,6 +74,15 @@ as_matrix <- function(mat){
 }
 
 #' @export
+compress_lineages <- function(cds, start, N = 500, cores = F){
+lineages = names(cds@lineages)
+for(lineage in lineages){
+print(lineage)
+compress_lineage(cds, lineage, start, gene = FALSE, N = N, cores = cores)
+}
+}
+
+#' @export
 compress_lineage <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F, cells = FALSE){
 cds_name = deparse(substitute(cds))
 if(gene == FALSE){

@@ -258,14 +258,14 @@ plot_multiple <- function(cds, gene, lineages, start, text.size = 18, plot.title
 cds_name = deparse(substitute(cds))
 input = paste0(cds_name,"@expression$", lineages[1])
 N = nrow(eval(parse(text = input)))
-input = paste0("get_lineage_object(",cds_name,", '", lineages[1], "',", start, ")")
-cds_subset = eval(parse(text=input))
-pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
-pt <- as.data.frame(pt)
-pt = pt[,1]
-step = ((length(pt)-3)/N)
-pt.comp = SlidingWindow("mean", pt, 3, step)
-max.pt = max(pt.comp)
+pts = c()
+for(lineage in lineages){
+input = paste0(cds_name,"@pseudotime$", lineage)
+pt = nrow(eval(parse(text = input)))
+pts = c(pts, pt)
+}
+max.pt = max(pts)
+print(max.pt)
 dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
 cols = c("pseudotime")
 fits = c()

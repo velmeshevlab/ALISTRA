@@ -78,8 +78,9 @@ compress_lineages <- function(cds, start, N = 500, cores = F){
 lineages = names(cds@lineages)
 for(lineage in lineages){
 print(lineage)
-compress_lineage(cds, lineage, start, gene = FALSE, N = N, cores = cores)
+cds = compress_lineage(cds, lineage, start, gene = FALSE, N = N, cores = cores)
 }
+return(cds)
 }
 
 #' @export

@@ -296,7 +296,8 @@ loop_input3 = "new_scale_color()"
 loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
 q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))
 }
-q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
+#q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
+q <- q + scale_y_log10()
 q <- q + ylim(y = c(0,ymax))
 q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
 q

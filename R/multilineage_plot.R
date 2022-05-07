@@ -261,7 +261,7 @@ N = nrow(eval(parse(text = input)))
 pts = c()
 for(lineage in lineages){
 input = paste0(cds_name,"@pseudotime$", lineage)
-pt = nrow(eval(parse(text = input)))
+pt = eval(parse(text = input))
 pts = c(pts, pt)
 }
 max.pt = max(pts)

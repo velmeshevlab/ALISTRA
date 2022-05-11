@@ -168,7 +168,7 @@ fit = pbsapply(mat, fit.m3, pt = pt.comp, max.pt = max.pt, N = N)
 }
 fit = apply(fit, 2, as.numeric)
 d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))
+return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = pt.comp))
 }
 exp$expression[exp$expression < 0] <- 0
 exp$expectation[exp$expectation < 0] <- 0

@@ -165,7 +165,7 @@ if(cores != F){
 fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
 }
 else{
-fit = pbsapply(mat, fit.m3, pt = pt.comp, max.pt = max.pt, N = N)
+fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N)
 }
 fit = apply(fit, 2, as.numeric)
 return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))

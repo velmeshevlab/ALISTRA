@@ -160,15 +160,15 @@ exp$expectation[exp$expectation < 0] <- 0
 }
 else{
 mat <- as.data.frame(exp.comp)
+d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
 if(cores != F){
-fit = pbsapply(mat, fit.m3, pt = pt.comp, max.pt = max.pt, N = N, cl = cl)
+fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
 }
 else{
 fit = pbsapply(mat, fit.m3, pt = pt.comp, max.pt = max.pt, N = N)
 }
 fit = apply(fit, 2, as.numeric)
-d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = pt.comp))
+return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))
 }
 exp$expression[exp$expression < 0] <- 0
 exp$expectation[exp$expectation < 0] <- 0

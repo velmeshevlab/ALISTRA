@@ -269,6 +269,7 @@ print(max.pt)
 dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
 cols = c("pseudotime")
 fits = c()
+exps = c()
 for(lineage in lineages){
 input = paste0("exp = ",cds_name,"@expression$", lineage)
 eval(parse(text=input))
@@ -286,6 +287,7 @@ dd = cbind(dd, exp, fit)
 cols = append(cols, paste0("exp_", lineage))
 cols = append(cols, paste0("fit_", lineage))
 fits = c(fits, fit)
+exps = c(exps, exp)
 }
 colnames(dd) <- cols
 ymax = max(fits)

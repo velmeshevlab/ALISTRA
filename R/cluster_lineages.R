@@ -119,6 +119,9 @@ AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_rat
   input = paste0("fit = ",cds_name,"@expectation$", lineage)
   eval(parse(text=input))
   fit.sel = fit[,gene]
+  if(any(is.na(fit.sel))){
+  return(FALSE)
+  }
   N = length(fit.sel)
   window = N*window_ratio
   out = c()

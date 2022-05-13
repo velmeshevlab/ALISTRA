@@ -253,7 +253,7 @@ return(pt)
 }
 
 #' @export
-plot_multiple <- function(cds, gene, lineages, start, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+plot_multiple <- function(cds, gene, lineages, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
 cds_name = deparse(substitute(cds))
 input = paste0(cds_name,"@expression$", lineages[1])
 N = nrow(eval(parse(text = input)))

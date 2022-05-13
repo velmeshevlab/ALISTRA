@@ -131,7 +131,7 @@ AUC_window_sub <- function(gene, cds, lineage, comp_lineages, factor, window_rat
     cds_name = deparse(substitute(cds))
     input = paste0("fit = ",cds_name,"@expectation$", lin)
     eval(parse(text=input))
-    if(gene %in% colnames(fit) & !(any(is.na(fit[,gene])))){
+    if(gene %in% colnames(fit) & !(is.na(fit[,gene]))){
     fit = fit[,gene]
     mat = cbind(mat, fit)
     top = max(fit, top)

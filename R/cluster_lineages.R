@@ -1,5 +1,5 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
@@ -24,28 +24,34 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
       #if there is a local min after local max
       if(locmin > locmax){
         #if there is at least 20% increase of exp after local min
-        if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit[locmin:length(fit)]) > factor){
+        if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
           #if there are two significant bends, it is a biphasic curve
           age_max = max(age.comp[locmin])
           age_range = age[which.min(abs(age$age_num - age_max)),1]
-          if((fit[locmax] - min(fit)) > (max(fit[locmin:length(fit)]) - fit[locmin])*factor){
+          if((fit[locmax] - min(fit)) > max(fit)*factor){
             c("biphasic",age_range)
           }
           #otherwise, it's a burst curve
+          else if(max(fit) == fit[length(fit)]){
+            c("burst",age_range)
+          }
           else{
             c("plateau",age_range)
           }
         }
       }
-      else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
+      else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
         c("transient",age_range)
       }
-      else if(((max(fit[1:locmin]) - fit[locmin])/max(fit[1:locmin])) > factor & ((fit[locmax] - fit[locmin])/fit[locmax]) > factor){
+      else if(((max(fit[1:locmin]) - fit[locmin])/max(fit)) > factor & ((fit[locmax] - fit[locmin])/fit[locmax]) > factor){
         c("biphasic",age_range)
+      }
+      else if(max(fit) == fit[length(fit)]){
+        c("burst",age_range)
       }
       else{c("plateau",age_range)}
     }
-    else{if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
+    else{if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
       c("transient",age_range)
     }
       else{c("plateau",age_range)}

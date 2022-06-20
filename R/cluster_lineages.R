@@ -33,13 +33,15 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 5){
           }
           #otherwise, it's a burst curve
           else{
-            c("burst",age_range)
+            c("plateau",age_range)
           }
         }
-        else{c("plateau",age_range)}
       }
       else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor){
         c("transient",age_range)
+      }
+      else if(((max(fit[1:locmin]) - fit[locmin])/max(fit[1:locmin])) > factor & ((fit[locmax] - fit[locmin])/fit[locmax]) > factor){
+        c("biphasic",age_range)
       }
       else{c("plateau",age_range)}
     }

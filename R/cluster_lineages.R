@@ -95,7 +95,7 @@ pt = pt[order(pt)]
 step = ((length(pt)-3)/N)
 pt.comp = SlidingWindow("mean", pt, 3, step)
 age_sel = age[names(pt), 2]
-age.comp = SlidingWindow("mean", age_sel, 3, step)
+age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
 #res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, pt.comp = pt.comp, age.comp = age.comp)
 res = pbsapply(genes, phase_sub, fit = fit, age = age, age.comp = age.comp)
 res

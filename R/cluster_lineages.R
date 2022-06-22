@@ -1,24 +1,25 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 0.25){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
   locmax = rollapply(fit, 3, function(x) which.max(x)==2)
   locmax = which(locmax == TRUE)
+  inc = min(which((fit-min(fit))>max(fit)*age_factor))
+  age_num = age.comp[inc]
+  target_age = min(age[age$age_num > age_num,2])
+  age_range = unique(age[age$age_num == target_age,1])
   #if there are no local minima or maxima - steady increase
   if(length(locmax) == 0 & length(locmin) == 0){
-    c("steady","Adult")
+    c("steady",age_range)
   }
   #if there are no local maxima or but there is a minimum - burst increase
   else if(length(locmin) > 0 & length(locmax) == 0){
-    age_max = max(age.comp[locmin])
-    age_range = age[which.min(abs(age$age_num - age_max)),1]
     c("burst",age_range)
   }
   #if there are local maxima, there are several situations
   else if(length(locmax) == 1){
     age_max = max(age.comp[locmax])
-    age_range = age[which.min(abs(age$age_num - age_max)),1]
     #if there is a local min, can be burst, plateau or biphasic
     if(length(locmin) > 0){
       #if there is a local min after local max
@@ -26,8 +27,6 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
         #if there is at least 20% increase of exp after local min
         if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
           #if there are two significant bends, it is a biphasic curve
-          age_max = max(age.comp[locmin])
-          age_range = age[which.min(abs(age$age_num - age_max)),1]
           if((fit[locmax] - min(fit)) > max(fit)*factor){
             c("biphasic",age_range)
           }
@@ -39,6 +38,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
             c("plateau",age_range)
           }
         }
+        else{c("plateau",age_range)}
       }
       else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
         c("transient",age_range)
@@ -58,8 +58,6 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
     }
   }
   else if(length(locmax) > 1){
-    age_max = min(age.comp[locmax])
-    age_range = age[which.min(abs(age$age_num - age_max)),1]
     c("biphasic",age_range)
   }
   else{

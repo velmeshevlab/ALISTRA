@@ -32,6 +32,46 @@ monocle_theme_opts <- function()
 }
 
 #' @export
+combine_objects <- function(obj1, obj2, name1, name2){
+  cds_new = new("cell_data_set_ext")
+  cds_new@'preprocess_aux'<-obj1@'preprocess_aux'
+  cds_new@'reduce_dim_aux'<-obj1@'reduce_dim_aux'
+  cds_new@'principal_graph_aux'<-obj1@'principal_graph_aux'
+  cds_new@'principal_graph'<-obj1@'principal_graph'
+  cds_new@'clusters'<-obj1@'clusters'
+  cds_new@'int_elementMetadata'<-obj1@'int_elementMetadata'
+  cds_new@'int_colData'<-obj1@'int_colData'
+  cds_new@'int_metadata'<-obj1@'int_metadata'
+  cds_new@'rowRanges'<-obj1@'rowRanges'
+  cds_new@'colData'<-obj1@'colData'
+  cds_new@'assays'<-obj1@'assays'
+  cds_new@'NAMES'<-obj1@'NAMES'
+  cds_new@'elementMetadata'<-obj1@'elementMetadata'
+  cds_new@'metadata'<-obj1@'metadata'
+  cds_new@'graphs'<-obj1@'graphs'
+  cds_new@'lineages'<-obj1@'lineages'
+  cds_new@'expression'<-obj1@'expression'
+  cds_new@'expectation'<-obj1@'expectation'
+  cds_new@'pseudotime'<-obj1@'pseudotime'
+  names(cds_new@'graphs') <- paste(names(cds_new@'graphs'), name1, sep = "_")
+  names(cds_new@'lineages') <- paste(names(cds_new@'lineages'), name1, sep = "_")
+  names(cds_new@'expression') <- paste(names(cds_new@'expression'), name1, sep = "_")
+  names(cds_new@'expectation') <- paste(names(cds_new@'expectation'), name1, sep = "_")
+  names(cds_new@'pseudotime') <- paste(names(cds_new@'pseudotime'), name1, sep = "_")
+  cds_new@'graphs'<-c(cds_new@'graphs', obj2@'graphs')
+  cds_new@'lineages'<-c(cds_new@'lineages', obj2@'lineages')
+  cds_new@'expression'<-c(cds_new@'expression', obj2@'expression')
+  cds_new@'expectation'<-c(cds_new@'expectation', obj2@'expectation')
+  cds_new@'pseudotime'<-c(cds_new@'pseudotime', obj2@'pseudotime')
+  names(cds_new@'graphs')[(length(names(obj2@'graphs'))+1):length(names(cds_new@'graphs'))] <- paste(names(obj2@'graphs'), name2, sep = "_")
+  names(cds_new@'lineages')[(length(names(obj2@'lineages'))+1):length(names(cds_new@'lineages'))] <- paste(names(obj2@'lineages'), name2, sep = "_")
+  names(cds_new@'expression')[(length(names(obj2@'expression'))+1):length(names(cds_new@'expression'))] <- paste(names(obj2@'expression'), name2, sep = "_")
+  names(cds_new@'expectation')[(length(names(obj2@'expectation'))+1):length(names(cds_new@'expectation'))] <- paste(names(obj2@'expectation'), name2, sep = "_")
+  names(cds_new@'pseudotime')[(length(names(obj2@'pseudotime'))+1):length(names(cds_new@'pseudotime'))] <- paste(names(obj2@'pseudotime'), name2, sep = "_")
+  cds_new
+  }
+
+#' @export
 combine_lineages <- function(cds, start){
 lineage = names(cds@lineages)[1]
 input = paste0("cds@graphs$", lineage)

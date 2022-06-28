@@ -9,13 +9,23 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
   age_num = age.comp[inc]
   target_age = min(age[age$age_num > age_num,2])
   age_range = unique(age[age$age_num == target_age,1])
+  inc_max = min(which(fit == max(fit)))
+  age_num_max = age.comp[inc_max]
+  target_age_max = min(age[age$age_num > age_num_max,2])
+  age_range_max = unique(age[age$age_num == target_age_max,1])
+  if(min(which(fit == max(fit))) < min(which(fit == min(fit)))){
+    mode = "descrease"
+  }
+  else{
+    mode = "increase"
+  }
   #if there are no local minima or maxima - steady increase
   if(length(locmax) == 0 & length(locmin) == 0){
-    c("steady",age_range)
+    c("steady",age_range,age_range_max,mode)
   }
   #if there are no local maxima or but there is a minimum - burst increase
   else if(length(locmin) > 0 & length(locmax) == 0){
-    c("burst",age_range)
+    c("burst",age_range,age_range_max,mode)
   }
   #if there are local maxima, there are several situations
   else if(length(locmax) == 1){
@@ -28,40 +38,40 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
         if((max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
           #if there are two significant bends, it is a biphasic curve
           if((fit[locmax] - min(fit)) > max(fit)*factor){
-            c("biphasic",age_range)
+            c("biphasic",age_range,age_range_max,mode)
           }
           #otherwise, it's a burst curve
           else if(max(fit) == fit[length(fit)]){
-            c("burst",age_range)
+            c("burst",age_range,age_range_max,mode)
           }
           else{
-            c("plateau",age_range)
+            c("plateau",age_range,age_range_max,mode)
           }
         }
-        else{c("plateau",age_range)}
+        else{c("plateau",age_range,mode)}
       }
       else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
-        c("transient",age_range)
+        c("transient",age_range,age_range_max,mode)
       }
       else if(((max(fit[1:locmin]) - fit[locmin])/max(fit)) > factor & ((fit[locmax] - fit[locmin])/fit[locmax]) > factor){
-        c("biphasic",age_range)
+        c("biphasic",age_range,age_range_max,mode)
       }
       else if(max(fit) == fit[length(fit)]){
         c("burst",age_range)
       }
-      else{c("plateau",age_range)}
+      else{c("plateau",age_range,age_range_max,mode)}
     }
     else{if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
-      c("transient",age_range)
+      c("transient",age_range,age_range_max,mode)
     }
-      else{c("plateau",age_range)}
+      else{c("plateau",age_range,age_range_max,mode)}
     }
   }
   else if(length(locmax) > 1){
-    c("biphasic",age_range)
+    c("biphasic",age_range,age_range_max,mode)
   }
   else{
-    c("other","Adult")
+    c("other","Adult",age_range_max,mode)
   }
 }
       

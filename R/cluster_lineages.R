@@ -5,7 +5,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
   locmin = which(locmin == TRUE)
   locmax = rollapply(fit, 3, function(x) which.max(x)==2)
   locmax = which(locmax == TRUE)
-  inc = min(which((fit-min(fit))>max(fit)*age_factor))
+  inc = min(which((fit-min(fit))>((max(fit)-min(fit))*age_factor)))
   age_num = age.comp[inc]
   target_age = min(age[age$age_num > age_num,2])
   age_range = unique(age[age$age_num == target_age,1])

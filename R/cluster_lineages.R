@@ -48,7 +48,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
             c("plateau",age_range,age_range_max,mode)
           }
         }
-        else{c("plateau",age_range,mode)}
+        else{c("plateau",age_range,age_range,mode)}
       }
       else if((fit[locmax] - min(fit[locmax:length(fit)]))/fit[locmax] > factor2){
         c("transient",age_range,age_range_max,mode)
@@ -57,7 +57,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
         c("biphasic",age_range,age_range_max,mode)
       }
       else if(max(fit) == fit[length(fit)]){
-        c("burst",age_range)
+        c("burst",age_range,age_range_max,mode)
       }
       else{c("plateau",age_range,age_range_max,mode)}
     }

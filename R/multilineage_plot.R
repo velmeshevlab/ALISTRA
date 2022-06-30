@@ -178,70 +178,44 @@ return(exp)
 }
 
 #' @export
-ridge_plot <- function(cds, cds1, gene, lineages_1, lineages_2, N = 500, colors1 = c("red", "blue", "green"), colors2 = c("coral", "cornflowerblue", "darkseagreen2"), label = F){
-exps_1 = list()
-means_1 = c()
-for(lineage in lineages_1){
-exp = compress_expression(cds, lineage, gene = toupper(gene), N)
-exp = exp$expectation
-mean = mean(quantile(exp, probs = seq(0, 1, by= 0.01))[6:96])
-means_1 = append(means_1, mean)
-exps_1[[lineage]] = exp
-}
-exps_2 = list()
-means_2 = c()
-for(lineage in lineages_2){
-exp = compress_expression(cds1, lineage, gene = gene, N)
-exp = exp$expectation
-mean = mean(quantile(exp, probs = seq(0, 1, by= 0.01))[6:96])
-means_2 = append(means_2, mean)
-exps_2[[lineage]] = exp
-}
-max1 = max(means_1)
-max2 = max(means_2)
-factor = max1/max2
-ymax1 = max(unlist(exps_1))
-ymax2 = max(unlist(lapply(exps_2, "*" , factor)))
-ymax = log10(max(ymax1, ymax2)+1)
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(as.data.frame(exps_1[1])+1))
-dd = as.data.frame(dd)
-colnames(dd) <- c("pseudotime", "exp")
-q1 <- ggplot(data = dd) + geom_ridgeline(aes(x = pseudotime, y = rep(0, N), height = exp), fill = colors1[1], color = "black", size = I(1.2)) + ylab(names(exps_1)[1]) + ylim(0, ymax) + theme_opts() + theme(axis.line.x = element_line(size=1, color="black"))
-qs = list()
-if(length(exps_1) > 1){
-M = 1
-rest_exp1 = exps_1[2:length(exps_1)]
-for(exp in rest_exp1){
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(as.data.frame(exp)+1))
-dd = as.data.frame(dd)
-colnames(dd) <- c("pseudotime", "exp") 
-q <- ggplot(data = dd) + geom_ridgeline(aes(x = pseudotime, y = rep(0, N), height = exp), fill = colors1[M+1], color = "black", size = I(1.2)) + ylab(names(rest_exp1)[M]) + ylim(0, ymax) + theme_opts()
-qs[[names(rest_exp1)[M]]] <- q
-M = M+1
-}
-}
-M = 1
-for(exp in exps_2){
-dd = cbind(seq(from=0, to=25, by = (25/N)+0.0001), log10(as.data.frame(exp*factor)+1))
-dd = as.data.frame(dd)
-colnames(dd) <- c("pseudotime", "exp") 
-q <- ggplot(data = dd) + geom_ridgeline(aes(x = pseudotime, y = rep(0, N), height = exp), fill = colors2[M], color = "black", size = I(1.2)) + ylab(names(exps_2)[M]) + ylim(0, ymax) + theme_opts()
-qs[[names(exps_2)[M]]] <- q
-M = M+1
-}
-input = paste0("ggarrange(")
-for(M in 0:(length(qs)-1)){
-input = paste0(input, 'qs[["', names(qs)[length(qs)-M],'"]], ')
-}
-if(label == TRUE){
-input = paste0(input, 'q1, labels = c(rev(names(qs)), names(exps_1)[1]), ncol = 1)')
-}
-else{
-input = paste0(input, 'q1, ncol = 1)')
-}
-input = noquote(input)
-figure <- eval(parse(text=input))
-figure
+plot_ridge <- function(cds, gene, lineages, scale_factor = 4, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+  cds_name = deparse(substitute(cds))
+  input = paste0(cds_name,"@expression$", lineages[1])
+  M = nrow(eval(parse(text = input)))
+  pts = c()
+  for(lineage in lineages){
+    input = paste0(cds_name,"@pseudotime$", lineage)
+    pt = eval(parse(text = input))[,1]
+    pts = c(pts, pt)
+  }
+  max.pt = max(pts)
+  print(max.pt)
+  dd = data.frame("1"=0,"2"=0,"3"=0)[FALSE,]
+  pt = seq(from=0, to=max.pt, by = max.pt/(M-1))
+  fits = c()
+  for(lineage in lineages){
+    input = paste0("exp = ",cds_name,"@expression$", lineage)
+    eval(parse(text=input))
+    if(gene %in% colnames(exp)){
+      input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
+      eval(parse(text=input))
+    }
+    else{
+      fit = rep(0, N)
+    }
+    dd = rbind(dd, cbind(fit,pt,rep(lineage, M)))
+    fits = c(fits, fit)
+  }
+  colnames(dd) <- c("expression", "pseudotime", "lineage")
+  dd$pseudotime <- as.numeric(dd$pseudotime)
+  dd$expression <- as.numeric(dd$expression)
+  ymax = max(fits)
+  q <- ggplot(dd, aes(pseudotime, c(rep(0,M), rep(max(fits)/scale_factor,M)), height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline()
+  q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
+  #q <- q + scale_y_log10()
+  #q <- q + ylim(y = c(0,ymax))
+  q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
+  q
 }
 
 #' @export

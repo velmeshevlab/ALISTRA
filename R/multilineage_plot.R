@@ -178,7 +178,7 @@ return(exp)
 }
 
 #' @export
-plot_ridge <- function(cds, gene, lineages, scale_factor = 4, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+plot_ridge <- function(cds, gene, lineages, scale_factor = 4, alpha = 0.6, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
   cds_name = deparse(substitute(cds))
   input = paste0(cds_name,"@expression$", lineages[1])
   M = nrow(eval(parse(text = input)))
@@ -193,6 +193,20 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, text.size = 18, pl
   dd = data.frame("1"=0,"2"=0,"3"=0)[FALSE,]
   pt = seq(from=0, to=max.pt, by = max.pt/(M-1))
   fits = c()
+  ys = c()
+  i = 0
+  for(lineage in lineages){
+    input = paste0("exp = ",cds_name,"@expression$", lineage)
+    eval(parse(text=input))
+    if(gene %in% colnames(exp)){
+      input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
+      eval(parse(text=input))
+    }
+    else{
+      fit = rep(0, N)
+    }
+    fits = c(fits, fit)
+  }
   for(lineage in lineages){
     input = paste0("exp = ",cds_name,"@expression$", lineage)
     eval(parse(text=input))
@@ -204,13 +218,18 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, text.size = 18, pl
       fit = rep(0, N)
     }
     dd = rbind(dd, cbind(fit,pt,rep(lineage, M)))
-    fits = c(fits, fit)
-  }
+    ys = c(ys, rep((max(fits)/scale_factor)*i,M))
+    i = i+1
+    }
   colnames(dd) <- c("expression", "pseudotime", "lineage")
   dd$pseudotime <- as.numeric(dd$pseudotime)
   dd$expression <- as.numeric(dd$expression)
   ymax = max(fits)
-  q <- ggplot(dd, aes(pseudotime, c(rep(0,M), rep(max(fits)/scale_factor,M)), height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline() + scale_fill_manual(values = colors)
+  colors.adj = c()
+  for(color in colors){
+    colors.adj = append(colors.adj, adjustcolor(color, alpha.f = alpha))
+  }
+  q <- ggplot(dd, aes(pseudotime, ys, height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline() + scale_fill_manual(values = colors.adj)
   q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
   #q <- q + scale_y_log10()
   #q <- q + ylim(y = c(0,ymax))

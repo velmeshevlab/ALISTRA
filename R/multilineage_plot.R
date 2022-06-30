@@ -210,7 +210,7 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, text.size = 18, pl
   dd$pseudotime <- as.numeric(dd$pseudotime)
   dd$expression <- as.numeric(dd$expression)
   ymax = max(fits)
-  q <- ggplot(dd, aes(pseudotime, c(rep(0,M), rep(max(fits)/scale_factor,M)), height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline()
+  q <- ggplot(dd, aes(pseudotime, c(rep(0,M), rep(max(fits)/scale_factor,M)), height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline() + scale_fill_manual(values = colors)
   q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
   #q <- q + scale_y_log10()
   #q <- q + ylim(y = c(0,ymax))

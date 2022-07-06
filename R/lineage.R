@@ -192,7 +192,7 @@ sub.graph = sub.graph[[n]]
 }
 
 #' @export
-isolate_graph <- function(cds, start, end, lineage, include_nodes = F){
+isolate_graph <- function(cds, start, end, lineage, include_nodes = NULL){
 #get lineage graph
 sub.graph = isolate_graph_sub(cds, start, end, lineage, include_nodes = include_nodes)
 input = paste0("cds@graphs$", lineage, " <- make_graph(sub.graph)")
@@ -280,7 +280,7 @@ isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = 
 }
 
 #' @export
-isolate_lineage <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
+isolate_lineage <- function(cds, lineage, sel_clusters = NULL, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
 sel.cells = isolate_lineage_sub(cds, lineage, sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
 input = paste0("cds@lineages$", lineage, " <- sel.cells")
 eval(parse(text=input))

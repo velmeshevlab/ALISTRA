@@ -1,5 +1,5 @@
 #' @export
-phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 0.5){
+phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 0.9){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)

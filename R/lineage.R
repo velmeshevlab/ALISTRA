@@ -240,7 +240,8 @@ return(cds_subset)
 }
 
 isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = NULL, subset = FALSE, N = 5, cl = 1){
-  input = paste0("sub.graph = cds@graphs$", lineage)
+  cds_name = deparse(substitute(cds))
+  input = paste0("sub.graph = ",cds_name,"@graphs$", lineage)
   eval(parse(text=input))
   nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
   if(subset == F){

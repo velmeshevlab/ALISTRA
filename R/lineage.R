@@ -198,7 +198,7 @@ cds_name = deparse(substitute(cds))
 sub.graph = isolate_graph_sub(cds, start, end, lineage, include_nodes = include_nodes)
 input = paste0(cds_name, "@graphs$", lineage, " <- make_graph(sub.graph)")
 eval(parse(text=input))
-return(cds)
+eval(parse(text=paste0("return(", cds_name, ")")))
 }
 
 get_lineage_object <- function(cds, lineage = FALSE, start, N = FALSE)

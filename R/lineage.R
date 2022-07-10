@@ -194,8 +194,9 @@ sub.graph = sub.graph[[n]]
 #' @export
 isolate_graph <- function(cds, start, end, lineage, include_nodes = NULL){
 #get lineage graph
+cds_name = deparse(substitute(cds))
 sub.graph = isolate_graph_sub(cds, start, end, lineage, include_nodes = include_nodes)
-input = paste0("cds@graphs$", lineage, " <- make_graph(sub.graph)")
+input = paste0(cds_name, "@graphs$", lineage, " <- make_graph(sub.graph)")
 eval(parse(text=input))
 return(cds)
 }

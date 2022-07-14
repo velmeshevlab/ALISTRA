@@ -10,7 +10,7 @@ format_lineage_out <- function(lineages){
     rownames(res) <- names
     out = rbind(out, res)
   }
-  colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "direction")
+  colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "direction", "gene")
   out
 }
 

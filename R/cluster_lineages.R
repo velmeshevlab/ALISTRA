@@ -1,4 +1,10 @@
 #' @export
+read.data=function(x){
+  data=read.table(x,sep="\t",header=TRUE,row.names=1,check.names=FALSE);
+  return(data);
+}
+
+#' @export
 phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 0.9){
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)

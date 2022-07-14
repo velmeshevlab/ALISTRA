@@ -1,4 +1,17 @@
 #' @export
+format_lineage_out <- function(lineages){
+  out = matrix(nrow = 0, ncol = 6,) 
+  for(lineage in lineages){
+    spec = read.data(paste0(lineage, "_spec.txt"))
+    class = read.data(paste0(lineage, "_age_range.txt"))
+    res = cbind(spec, class)
+    out = rbind(out, res)
+  }
+  colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "direction")
+  out
+}
+
+#' @export
 read.data=function(x){
   data=read.table(x,sep="\t",header=TRUE,row.names=1,check.names=FALSE);
   return(data);

@@ -5,6 +5,7 @@ format_lineage_out <- function(lineages){
     spec = read.data(paste0(lineage, "_spec.txt"))
     class = read.data(paste0(lineage, "_age_range.txt"))
     res = cbind(spec, class)
+    rownames(res) <- paste0(rownames(res), "_", lineage)
     out = rbind(out, res)
   }
   colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "direction")

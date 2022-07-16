@@ -259,31 +259,31 @@ plot_multiple <- function(cds, gene, lineages, points = T, text.size = 14, plot.
   max.pt = max(pts)
   print(max.pt)
   if(points == T){
-  dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-  cols = c("pseudotime")
-  fits = c()
-  exps = c()
-  for(lineage in lineages){
-    input = paste0("exp = ",cds_name,"@expression$", lineage)
-    eval(parse(text=input))
-    if(gene %in% colnames(exp)){
-      input = paste0("exp = ",cds_name,"@expression$", lineage,"[,'",gene,"']")
+    dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
+    cols = c("pseudotime")
+    fits = c()
+    exps = c()
+    for(lineage in lineages){
+      input = paste0("exp = ",cds_name,"@expression$", lineage)
       eval(parse(text=input))
-      input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
-      eval(parse(text=input))
+      if(gene %in% colnames(exp)){
+        input = paste0("exp = ",cds_name,"@expression$", lineage,"[,'",gene,"']")
+        eval(parse(text=input))
+        input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
+        eval(parse(text=input))
+      }
+      else{
+        exp = rep(0, N)
+        fit = rep(0, N)
+      }
+      dd = cbind(dd, exp, fit)
+      cols = append(cols, paste0("exp_", lineage))
+      cols = append(cols, paste0("fit_", lineage))
+      fits = c(fits, fit)
+      exps = c(exps, exp)
     }
-    else{
-      exp = rep(0, N)
-      fit = rep(0, N)
-    }
-    dd = cbind(dd, exp, fit)
-    cols = append(cols, paste0("exp_", lineage))
-    cols = append(cols, paste0("fit_", lineage))
-    fits = c(fits, fit)
-    exps = c(exps, exp)
-  }
-  colnames(dd) <- cols
-  ymax = max(fits)
+    colnames(dd) <- cols
+    ymax = max(fits)
   }
   else{
     fits = c()
@@ -306,16 +306,17 @@ plot_multiple <- function(cds, gene, lineages, points = T, text.size = 14, plot.
     dd = as.data.frame(dd)
     dd$pseudotime <- as.numeric(dd$pseudotime)
     dd$fit <- as.numeric(dd$fit)
+    dd$lineage <- factor(dd$lineage, levels = lineages)
   }
   q <- ggplot(data = dd)
   if(points == T){
-  for(N in 1:length(lineages)){
-    loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(1))")
-    loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
-    loop_input3 = "new_scale_color()"
-    loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
-    q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))
-  }
+    for(N in 1:length(lineages)){
+      loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(1))")
+      loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
+      loop_input3 = "new_scale_color()"
+      loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
+      q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))
+    }
   }
   else{
     q <- q + geom_line(aes(x = pseudotime, y = fit, color = lineage), size = I(1.2)) + scale_color_manual(values = colors)

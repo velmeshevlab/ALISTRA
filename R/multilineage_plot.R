@@ -246,54 +246,82 @@ return(pt)
 }
 
 #' @export
-plot_multiple <- function(cds, gene, lineages, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
-cds_name = deparse(substitute(cds))
-input = paste0(cds_name,"@expression$", lineages[1])
-N = nrow(eval(parse(text = input)))
-pts = c()
-for(lineage in lineages){
-input = paste0(cds_name,"@pseudotime$", lineage)
-pt = eval(parse(text = input))[,1]
-pts = c(pts, pt)
-}
-max.pt = max(pts)
-print(max.pt)
-dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-cols = c("pseudotime")
-fits = c()
-exps = c()
-for(lineage in lineages){
-input = paste0("exp = ",cds_name,"@expression$", lineage)
-eval(parse(text=input))
-if(gene %in% colnames(exp)){
-input = paste0("exp = ",cds_name,"@expression$", lineage,"[,'",gene,"']")
-eval(parse(text=input))
-input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
-eval(parse(text=input))
-}
-else{
-exp = rep(0, N)
-fit = rep(0, N)
-}
-dd = cbind(dd, exp, fit)
-cols = append(cols, paste0("exp_", lineage))
-cols = append(cols, paste0("fit_", lineage))
-fits = c(fits, fit)
-exps = c(exps, exp)
-}
-colnames(dd) <- cols
-ymax = max(fits)
-q <- ggplot(data = dd)
-for(N in 1:length(lineages)){
-loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(1))")
-loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
-loop_input3 = "new_scale_color()"
-loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
-q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))
-}
-#q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
-q <- q + scale_y_log10()
-q <- q + ylim(y = c(0,ymax))
-q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
-q
+plot_multiple <- function(cds, gene, lineages, points = T, text.size = 14, plot.title.size = 36, legend.key.size = 0.5, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+  cds_name = deparse(substitute(cds))
+  input = paste0(cds_name,"@expression$", lineages[1])
+  N = nrow(eval(parse(text = input)))
+  pts = c()
+  for(lineage in lineages){
+    input = paste0(cds_name,"@pseudotime$", lineage)
+    pt = eval(parse(text = input))[,1]
+    pts = c(pts, pt)
+  }
+  max.pt = max(pts)
+  print(max.pt)
+  if(points == T){
+  dd = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
+  cols = c("pseudotime")
+  fits = c()
+  exps = c()
+  for(lineage in lineages){
+    input = paste0("exp = ",cds_name,"@expression$", lineage)
+    eval(parse(text=input))
+    if(gene %in% colnames(exp)){
+      input = paste0("exp = ",cds_name,"@expression$", lineage,"[,'",gene,"']")
+      eval(parse(text=input))
+      input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
+      eval(parse(text=input))
+    }
+    else{
+      exp = rep(0, N)
+      fit = rep(0, N)
+    }
+    dd = cbind(dd, exp, fit)
+    cols = append(cols, paste0("exp_", lineage))
+    cols = append(cols, paste0("fit_", lineage))
+    fits = c(fits, fit)
+    exps = c(exps, exp)
+  }
+  colnames(dd) <- cols
+  ymax = max(fits)
+  }
+  else{
+    fits = c()
+    dd = matrix(ncol = 3, nrow = 0,)
+    for(lineage in lineages){
+      input = paste0("exp = ",cds_name,"@expression$", lineage)
+      eval(parse(text=input))
+      if(gene %in% colnames(exp)){
+        input = paste0("fit = ",cds_name,"@expectation$", lineage,"[,'",gene,"']")
+        eval(parse(text=input))
+      }
+      else{
+        fit = rep(0, N)
+      }
+      fits = c(fits, fit)
+      dd = rbind(dd, cbind(seq(from=0, to=max.pt, by = max.pt/(N-1)), fit, rep(lineage, length(fit))))
+    }
+    ymax = max(fits)
+    colnames(dd) <- c("pseudotime", "fit", "lineage")
+    dd = as.data.frame(dd)
+    dd$pseudotime <- as.numeric(dd$pseudotime)
+    dd$fit <- as.numeric(dd$fit)
+  }
+  q <- ggplot(data = dd)
+  if(points == T){
+  for(N in 1:length(lineages)){
+    loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(1))")
+    loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
+    loop_input3 = "new_scale_color()"
+    loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
+    q <- q + eval(parse(text=loop_input1)) + eval(parse(text=loop_input2)) + eval(parse(text=loop_input3)) + eval(parse(text=loop_input4))
+  }
+  }
+  else{
+    q <- q + geom_line(aes(x = pseudotime, y = fit, color = lineage), size = I(1.2)) + scale_color_manual(values = colors)
+  }
+  q <- q + scale_y_log10() 
+  q <- q + ylim(y = c(0,ymax))
+  q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
+  q
 }

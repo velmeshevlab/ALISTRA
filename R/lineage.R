@@ -77,10 +77,10 @@ combine_lineages <- function(cds, start){
   lineage = names(cds@lineages)[1]
   input = paste0(cds_name, "@graphs$", lineage)
   if(length(names(cds@lineages)) > 1){
-  for(lineage in names(cds@lineages)[2:length(names(cds@lineages))]){
-    input = paste0(input, cds_name, ",@graphs$", lineage)
-  }
-  input = paste0("igraph::union(", input, ")")
+    for(lineage in names(cds@lineages)[2:length(names(cds@lineages))]){
+      input = paste0(input, ",", cds_name,"@graphs$", lineage)
+    }
+    input = paste0("igraph::union(", input, ")")
   }
   g = eval(parse(text=input))
   nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
@@ -95,6 +95,7 @@ combine_lineages <- function(cds, start){
   cds <- order_cells(cds, root_pr_nodes = as.character(paste0("Y_",start)))
   return(cds)
 }
+
 
 #' @export
 node_plot <- function(cds, filter = F, N = 50){

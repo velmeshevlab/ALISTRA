@@ -73,24 +73,27 @@ combine_objects <- function(obj1, obj2, name1, name2){
 
 #' @export
 combine_lineages <- function(cds, start){
-lineage = names(cds@lineages)[1]
-input = paste0("cds@graphs$", lineage)
-for(lineage in names(cds@lineages)[2:length(names(cds@lineages))]){
-input = paste0(input,",cds@graphs$", lineage)
-}
-input = paste0("igraph::union(", input, ")")
-g = eval(parse(text=input))
-nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
-principal_graph(cds)[["UMAP"]] <- g
-cds@principal_graph_aux[["UMAP"]]$dp_mst <- nodes_UMAP[,names(V(g))]
-cells_UMAP = as.data.frame(reducedDims(cds)["UMAP"])
-closest_vertex = apply(cells_UMAP[,c("UMAP_1", "UMAP_2")], 1, calculate_closest_vertex, nodes = as.matrix(nodes_UMAP[,names(V(g))]))
-closest_vertex = as.data.frame(closest_vertex)
-cds@principal_graph_aux[["UMAP"]]$pr_graph_cell_proj_closest_vertex <- closest_vertex
-source_url("https://raw.githubusercontent.com/cole-trapnell-lab/monocle3/master/R/learn_graph.R")
-cds <- project2MST(cds, project_point_to_line_segment, F, T, "UMAP", nodes_UMAP[,names(V(g))])
-cds <- order_cells(cds, root_pr_nodes = as.character(paste0("Y_",start)))
-return(cds)
+  cds_name = deparse(substitute(cds))
+  lineage = names(cds@lineages)[1]
+  input = paste0(cds_name, "@graphs$", lineage)
+  if(length(names(cds@lineages)) > 1){
+  for(lineage in names(cds@lineages)[2:length(names(cds@lineages))]){
+    input = paste0(input, cds_name, ",@graphs$", lineage)
+  }
+  input = paste0("igraph::union(", input, ")")
+  }
+  g = eval(parse(text=input))
+  nodes_UMAP = cds@principal_graph_aux[["UMAP"]]$dp_mst
+  principal_graph(cds)[["UMAP"]] <- g
+  cds@principal_graph_aux[["UMAP"]]$dp_mst <- nodes_UMAP[,names(V(g))]
+  cells_UMAP = as.data.frame(reducedDims(cds)["UMAP"])
+  closest_vertex = apply(cells_UMAP[,c("UMAP_1", "UMAP_2")], 1, calculate_closest_vertex, nodes = as.matrix(nodes_UMAP[,names(V(g))]))
+  closest_vertex = as.data.frame(closest_vertex)
+  cds@principal_graph_aux[["UMAP"]]$pr_graph_cell_proj_closest_vertex <- closest_vertex
+  source_url("https://raw.githubusercontent.com/cole-trapnell-lab/monocle3/master/R/learn_graph.R")
+  cds <- project2MST(cds, project_point_to_line_segment, F, T, "UMAP", nodes_UMAP[,names(V(g))])
+  cds <- order_cells(cds, root_pr_nodes = as.character(paste0("Y_",start)))
+  return(cds)
 }
 
 #' @export
@@ -283,8 +286,9 @@ isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = 
 
 #' @export
 isolate_lineage <- function(cds, lineage, sel_clusters = NULL, start_regions = F, starting_clusters = F, subset = FALSE, N = 5, cl = 1){
+cds_name = deparse(substitute(cds))
 sel.cells = isolate_lineage_sub(cds, lineage, sel_clusters = sel_clusters, start_regions = start_regions, starting_clusters = starting_clusters, subset = subset, N = N, cl = cl)
-input = paste0("cds@lineages$", lineage, " <- sel.cells")
+input = paste0(cds_name, "@lineages$", lineage, " <- sel.cells")
 eval(parse(text=input))
 return(cds)
 }

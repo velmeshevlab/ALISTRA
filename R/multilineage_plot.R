@@ -103,7 +103,7 @@ eval(parse(text=paste0("return(",cds_name, ")")))
 }
 
 #' @export
-compress_expression <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F){
+compress_expression <- function(cds, lineage, start, window = 3, gene = FALSE, N = 500, cores = F){
 cds_name = deparse(substitute(cds))
 if(cores != F){
 cl <- makeCluster(cores)
@@ -122,14 +122,14 @@ colnames(pt) <- c("pseudotime")
 #exp = cbind(pt, round(t(exp)))
 exp = cbind(pt, t(exp))
 exp = exp[order(exp$pseudotime),]
-step = ((nrow(exp)-3)/N)
+step = ((nrow(exp)-window)/N)
 pt = exp[,"pseudotime"]
 #use sliding window to compress expression values and pseudotime
-pt.comp = SlidingWindow("mean", pt, 3, step)
+pt.comp = SlidingWindow("mean", pt, window, step)
 max.pt = max(pt.comp)
 if(gene != F){
 exp = exp[,c("pseudotime", gene)]
-exp.comp = compress(exp[,gene], 3, step = step)
+exp.comp = compress(exp[,gene], window, step = step)
 }
 else{
 print(paste0("Compressing lineage ", lineage, " and fitting curves"))

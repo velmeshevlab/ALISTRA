@@ -74,110 +74,110 @@ as_matrix <- function(mat){
 }
 
 #' @export
-compress_lineages_v2 <- function(cds, start, window = NULL, N = 500, cores = F){
-lineages = names(cds@lineages)
-for(lineage in lineages){
-print(lineage)
-cds = compress_lineage_v2(cds, lineage, start, window = window, gene = FALSE, N = N, cores = cores)
-}
-return(cds)
-}
-
-#' @export
-compress_lineage_v2 <- function(cds, lineage, start, window = NULL, gene = FALSE, N = 500, cores = F, cells = FALSE){
-cds_name = deparse(substitute(cds))
-if(gene == FALSE){
-input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = ", gene, ", N = ", N, ", cores = ", cores, ")")
-}
-else{
-input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
-}
-exp = eval(parse(text=input))
-input = paste0(cds_name, "@expression$", lineage, " <- exp$expression")
-eval(parse(text=input))
-input = paste0(cds_name, "@expectation$", lineage, " <- exp$expectation")
-eval(parse(text=input))
-input = paste0(cds_name, "@pseudotime$", lineage, " <- exp$pseudotime")
-eval(parse(text=input))
-eval(parse(text=paste0("return(",cds_name, ")")))
+compress_lineages_v2 <- function(cds, start, window = F, N = 500, cores = F){
+  lineages = names(cds@lineages)
+  for(lineage in lineages){
+    print(lineage)
+    cds = compress_lineage_v2(cds, lineage, start, window = window, gene = FALSE, N = N, cores = cores)
+  }
+  return(cds)
 }
 
 #' @export
-compress_expression_v2 <- function(cds, lineage, start, window = NULL, gene = FALSE, N = 500, cores = F){
-cds_name = deparse(substitute(cds))
-if(cores != F){
-cl <- makeCluster(cores)
-clusterEvalQ(cl, c(library(evobiR)))
+compress_lineage_v2 <- function(cds, lineage, start, window = F, gene = FALSE, N = 500, cores = F, cells = FALSE){
+  cds_name = deparse(substitute(cds))
+  if(gene == FALSE){
+    input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = ", gene, ", N = ", N, ", cores = ", cores, ")")
+  }
+  else{
+    input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
+  }
+  exp = eval(parse(text=input))
+  input = paste0(cds_name, "@expression$", lineage, " <- exp$expression")
+  eval(parse(text=input))
+  input = paste0(cds_name, "@expectation$", lineage, " <- exp$expectation")
+  eval(parse(text=input))
+  input = paste0(cds_name, "@pseudotime$", lineage, " <- exp$pseudotime")
+  eval(parse(text=input))
+  eval(parse(text=paste0("return(",cds_name, ")")))
 }
-input = paste0("get_lineage_object(",cds_name,", lineage = '", lineage, "', start = ", start, ")")
-cds_subset = eval(parse(text=input))
-family = stats::quasipoisson()
-model = "expression ~ splines::ns(pseudotime, df=3)"
-names(cds_subset) <- rowData(cds_subset)$gene_short_name
-exp = as.data.frame(as_matrix(exprs(cds_subset)))
-exp = t(t(exp) /  pData(cds_subset)[, 'Size_Factor'])
-pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
-pt <- as.data.frame(pt)
-colnames(pt) <- c("pseudotime")
-#exp = cbind(pt, round(t(exp)))
-exp = cbind(pt, t(exp))
-exp = exp[order(exp$pseudotime),]
-if(window == NULL){
-window = nrow(exp)/N
-}
-step = ((nrow(exp)-window)/N)
-pt = exp[,"pseudotime"]
-#use sliding window to compress expression values and pseudotime
-pt.comp = SlidingWindow("mean", pt, window, step)
-max.pt = max(pt.comp)
-if(gene != F){
-exp = exp[,c("pseudotime", gene)]
-exp.comp = compress(exp[,gene], window, step = step)
-}
-else{
-print(paste0("Compressing lineage ", lineage, " and fitting curves"))
-mat <- as.data.frame(exp[,2:ncol(exp)])
-if(cores != F){
-exp.comp = pbsapply(mat, compress, step = step, cl = cl)
-}
-else{
-exp.comp = pbsapply(mat, compress, step = step)
-}
-}
-if(gene != F){
-exp_data.sel = cbind(pt.comp, exp.comp)
-exp_data.sel = as.data.frame(exp_data.sel)
-colnames(exp_data.sel) <- c("pseudotime", "expression")
-exp_data.sel$pseudotime <- as.numeric(as.character(exp_data.sel$pseudotime))
-exp_data.sel$expression <- as.numeric(as.character(exp_data.sel$expression))
-d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-colnames(d) <- c("pseudotime")
-tryCatch({fit = speedglm(model, data = exp_data.sel, family = family, acc=1e-3, model=FALSE, y=FALSE)
-fit = predict(fit, newdata = d, type='response')
-}, error=function(cond) {fit = as.data.frame(rep(0, N))})
-exp = as.data.frame(cbind(exp.comp, fit, d))
-colnames(exp) <- c("expression", "expectation", "pseudotime")
-exp$expression[exp$expression < 0] <- 0
-exp$expectation[exp$expectation < 0] <- 0
-}
-else{
-mat <- as.data.frame(exp.comp)
-d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
-if(cores != F){
-fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
-}
-else{
-fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N)
-}
-fit = apply(fit, 2, as.numeric)
-return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))
-}
-exp$expression[exp$expression < 0] <- 0
-exp$expectation[exp$expectation < 0] <- 0
-if(cores != F){
-stopCluster(cl)
-}
-return(exp)
+
+#' @export
+compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE, N = 500, cores = F){
+  cds_name = deparse(substitute(cds))
+  if(cores != F){
+    cl <- makeCluster(cores)
+    clusterEvalQ(cl, c(library(evobiR)))
+  }
+  input = paste0("get_lineage_object(",cds_name,", lineage = '", lineage, "', start = ", start, ")")
+  cds_subset = eval(parse(text=input))
+  family = stats::quasipoisson()
+  model = "expression ~ splines::ns(pseudotime, df=3)"
+  names(cds_subset) <- rowData(cds_subset)$gene_short_name
+  exp = as.data.frame(as_matrix(exprs(cds_subset)))
+  exp = t(t(exp) /  pData(cds_subset)[, 'Size_Factor'])
+  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+  pt <- as.data.frame(pt)
+  colnames(pt) <- c("pseudotime")
+  #exp = cbind(pt, round(t(exp)))
+  exp = cbind(pt, t(exp))
+  exp = exp[order(exp$pseudotime),]
+  if(window == FALSE){
+    window = nrow(exp)/N
+  }
+  step = ((nrow(exp)-window)/N)
+  pt = exp[,"pseudotime"]
+  #use sliding window to compress expression values and pseudotime
+  pt.comp = SlidingWindow("mean", pt, window, step)
+  max.pt = max(pt.comp)
+  if(gene != F){
+    exp = exp[,c("pseudotime", gene)]
+    exp.comp = compress(exp[,gene], window, step = step)
+  }
+  else{
+    print(paste0("Compressing lineage ", lineage, " and fitting curves"))
+    mat <- as.data.frame(exp[,2:ncol(exp)])
+    if(cores != F){
+      exp.comp = pbsapply(mat, compress, step = step, cl = cl)
+    }
+    else{
+      exp.comp = pbsapply(mat, compress, step = step)
+    }
+  }
+  if(gene != F){
+    exp_data.sel = cbind(pt.comp, exp.comp)
+    exp_data.sel = as.data.frame(exp_data.sel)
+    colnames(exp_data.sel) <- c("pseudotime", "expression")
+    exp_data.sel$pseudotime <- as.numeric(as.character(exp_data.sel$pseudotime))
+    exp_data.sel$expression <- as.numeric(as.character(exp_data.sel$expression))
+    d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
+    colnames(d) <- c("pseudotime")
+    tryCatch({fit = speedglm(model, data = exp_data.sel, family = family, acc=1e-3, model=FALSE, y=FALSE)
+    fit = predict(fit, newdata = d, type='response')
+    }, error=function(cond) {fit = as.data.frame(rep(0, N))})
+    exp = as.data.frame(cbind(exp.comp, fit, d))
+    colnames(exp) <- c("expression", "expectation", "pseudotime")
+    exp$expression[exp$expression < 0] <- 0
+    exp$expectation[exp$expectation < 0] <- 0
+  }
+  else{
+    mat <- as.data.frame(exp.comp)
+    d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
+    if(cores != F){
+      fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
+    }
+    else{
+      fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N)
+    }
+    fit = apply(fit, 2, as.numeric)
+    return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))
+  }
+  exp$expression[exp$expression < 0] <- 0
+  exp$expectation[exp$expectation < 0] <- 0
+  if(cores != F){
+    stopCluster(cl)
+  }
+  return(exp)
 }
 
 #' @export

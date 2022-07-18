@@ -84,6 +84,20 @@ compress_lineages_v2 <- function(cds, start, window = F, N = 500, cores = F){
 }
 
 #' @export
+compress2 <- function(df, window = window, step){
+  df.comp = SlidingWindow("mean", df, window, step)
+}
+
+compress_lineages_v2 <- function(cds, start, window = F, N = 500, cores = F){
+  lineages = names(cds@lineages)
+  for(lineage in lineages){
+    print(lineage)
+    cds = compress_lineage_v2(cds, lineage = lineage, start = start, window = window, gene = FALSE, N = N, cores = cores)
+  }
+  return(cds)
+}
+
+#' @export
 compress_lineage_v2 <- function(cds, lineage, start, window = F, gene = FALSE, N = 500, cores = F, cells = FALSE){
   cds_name = deparse(substitute(cds))
   if(gene == FALSE){
@@ -115,33 +129,29 @@ compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE
   model = "expression ~ splines::ns(pseudotime, df=3)"
   names(cds_subset) <- rowData(cds_subset)$gene_short_name
   exp = as.data.frame(as_matrix(exprs(cds_subset)))
-  exp = t(t(exp) /  pData(cds_subset)[, 'Size_Factor'])
+  exp = t(exp) /  pData(cds_subset)[, 'Size_Factor']
   pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
-  pt <- as.data.frame(pt)
-  colnames(pt) <- c("pseudotime")
-  #exp = cbind(pt, round(t(exp)))
-  exp = cbind(pt, t(exp))
-  exp = exp[order(exp$pseudotime),]
+  pt = pt[order(pt)]
+  exp = exp[names(pt),]
   if(window == FALSE){
     window = nrow(exp)/N
   }
   step = ((nrow(exp)-window)/N)
-  pt = exp[,"pseudotime"]
   #use sliding window to compress expression values and pseudotime
+  print(paste0("Window: ", window))
+  print(paste0("Step: ", step))
   pt.comp = SlidingWindow("mean", pt, window, step)
   max.pt = max(pt.comp)
   if(gene != F){
-    exp = exp[,c("pseudotime", gene)]
-    exp.comp = compress(exp[,gene], window, step = step)
+    exp.comp = compress2(exp[,gene], window = window, step = step)
   }
   else{
     print(paste0("Compressing lineage ", lineage, " and fitting curves"))
-    mat <- as.data.frame(exp[,2:ncol(exp)])
     if(cores != F){
-      exp.comp = pbsapply(mat, compress, step = step, cl = cl)
+      exp.comp = pbapply(exp, 2, compress2, window = window, step = step, cl = cl)
     }
     else{
-      exp.comp = pbsapply(mat, compress, step = step)
+      exp.comp = pbapply(exp, 2, compress2, window = window, step = step)
     }
   }
   if(gene != F){

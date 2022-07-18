@@ -161,13 +161,12 @@ compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE
     exp$expectation[exp$expectation < 0] <- 0
   }
   else{
-    mat <- as.data.frame(exp.comp)
     d = as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1)))
     if(cores != F){
-      fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
+      fit = pbapply(exp.comp, 2, fit.m3, pt = d, max.pt = max(d), N = N, cl = cl)
     }
     else{
-      fit = pbsapply(mat, fit.m3, pt = d, max.pt = max(d), N = N)
+      fit = pbapply(exp.comp, 2, fit.m3, pt = d, max.pt = max(d), N = N)
     }
     fit = apply(fit, 2, as.numeric)
     return(list("expression" = exp.comp, "expectation" = fit, "pseudotime" = d))

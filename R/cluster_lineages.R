@@ -393,10 +393,10 @@ for(lineage in lineages){
 d = read.table(paste0("pt_DGE_", lineage,".txt"), sep = "\t", header = T)
 d = d[d$q_value < q & d$morans_I >= I,]
 if(length(pt_genes) == 0){
-pt_genes = toupper(d$gene_short_name)
+pt_genes = d$gene_short_name
 }
 else{
-pt_genes = union(pt_genes, toupper(d$gene_short_name))
+pt_genes = union(pt_genes, d$gene_short_name)
 }
 }
 }
@@ -406,7 +406,7 @@ fit.comb = matrix(ncol = 0, nrow = nrow(fit), 0)
 for(lineage in lineages){
 input = paste0("fit = cds@expectation$", lineage)
 eval(parse(text=input))
-colnames(fit) <- toupper(colnames(fit))
+colnames(fit) <- colnames(fit)
 fit = fit[,colnames(fit)%in%pt_genes]
 colnames(fit) <- paste(lineage, colnames(fit), sep = "_")
 fit.comb = cbind(fit.comb, fit)
@@ -431,10 +431,10 @@ for(lineage in lineages){
 d = read.table(paste0("pt_DGE_", lineage,".txt"), sep = "\t", header = T)
 d = d[d$q_value < q & d$morans_I >= I,]
 if(length(pt_genes) == 0){
-pt_genes = toupper(d$gene_short_name)
+pt_genes = d$gene_short_name
 }
 else{
-pt_genes = union(pt_genes, toupper(d$gene_short_name))
+pt_genes = union(pt_genes, d$gene_short_name)
 }
 }
 }
@@ -445,7 +445,7 @@ fit.comb = matrix(ncol = 0, nrow = nrow(fit), 0)
 for(lineage in lineages){
 input = paste0("fit = ",cds_name,"@expectation$", lineage)
 eval(parse(text=input))
-colnames(fit) <- toupper(colnames(fit))
+colnames(fit) <- colnames(fit)
 fit = fit[,colnames(fit)%in%pt_genes]
 colnames(fit) <- paste(lineage, colnames(fit), sep = "__")
 fit.comb = cbind(fit.comb, fit)

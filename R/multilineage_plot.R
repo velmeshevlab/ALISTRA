@@ -74,16 +74,6 @@ as_matrix <- function(mat){
 }
 
 #' @export
-compress_lineages_v2 <- function(cds, start, window = F, N = 500, cores = F){
-  lineages = names(cds@lineages)
-  for(lineage in lineages){
-    print(lineage)
-    cds = compress_lineage_v2(cds, lineage, start, window = window, gene = FALSE, N = N, cores = cores)
-  }
-  return(cds)
-}
-
-#' @export
 compress2 <- function(df, window = window, step){
   df.comp = SlidingWindow("mean", df, window, step)
 }

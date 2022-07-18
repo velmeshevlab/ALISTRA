@@ -90,7 +90,7 @@ if(gene == FALSE){
 input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = ", gene, ", N = ", N, ", cores = ", cores, ")")
 }
 else{
-input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
+input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
 }
 exp = eval(parse(text=input))
 input = paste0(cds_name, "@expression$", lineage, " <- exp$expression")

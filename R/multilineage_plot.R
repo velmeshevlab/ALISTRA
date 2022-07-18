@@ -74,23 +74,23 @@ as_matrix <- function(mat){
 }
 
 #' @export
-compress_lineages_v2 <- function(cds, start, N = 500, cores = F){
+compress_lineages_v2 <- function(cds, start, window = NULL, N = 500, cores = F){
 lineages = names(cds@lineages)
 for(lineage in lineages){
 print(lineage)
-cds = compress_lineage_v2(cds, lineage, start, gene = FALSE, N = N, cores = cores)
+cds = compress_lineage_v2(cds, lineage, start, window = window, gene = FALSE, N = N, cores = cores)
 }
 return(cds)
 }
 
 #' @export
-compress_lineage_v2 <- function(cds, lineage, start, gene = FALSE, N = 500, cores = F, cells = FALSE){
+compress_lineage_v2 <- function(cds, lineage, start, window = NULL, gene = FALSE, N = 500, cores = F, cells = FALSE){
 cds_name = deparse(substitute(cds))
 if(gene == FALSE){
-input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", gene = ", gene, ", N = ", N, ", cores = ", cores, ")")
+input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, ", gene = ", gene, ", N = ", N, ", cores = ", cores, ")")
 }
 else{
-input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
+input = paste0("compress_expression_v2(",cds_name,", lineage = '", lineage, "', start = ", start, ", window = ", window, gene = '", gene, "', N = ", N, ", cores = ", cores, ")")
 }
 exp = eval(parse(text=input))
 input = paste0(cds_name, "@expression$", lineage, " <- exp$expression")

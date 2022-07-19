@@ -83,6 +83,7 @@ compress_lineages_v2 <- function(cds, start, window = F, N = 500, cores = F){
   for(lineage in lineages){
     print(lineage)
     cds = compress_lineage_v2(cds, lineage = lineage, start = start, window = window, gene = FALSE, N = N, cores = cores)
+    gc()
   }
   return(cds)
 }

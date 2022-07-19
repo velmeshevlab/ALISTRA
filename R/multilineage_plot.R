@@ -74,7 +74,7 @@ as_matrix <- function(mat){
 }
 
 #' @export
-compress2 <- function(df, window = window, step){
+compress2 <- function(df, window, step){
   df.comp = SlidingWindow("mean", df, window, step)
 }
 

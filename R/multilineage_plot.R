@@ -123,7 +123,6 @@ compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE
   pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]
   exp = exp[names(pt),]
-  exp = as.data.frame(exp)
   if(window == FALSE){
     window = nrow(exp)/N
   }

@@ -118,7 +118,7 @@ compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE
   family = stats::quasipoisson()
   model = "expression ~ splines::ns(pseudotime, df=3)"
   names(cds_subset) <- rowData(cds_subset)$gene_short_name
-  exp = as.data.frame(as_matrix(exprs(cds_subset)))
+  exp = as_matrix(exprs(cds_subset))
   exp = t(exp) /  pData(cds_subset)[, 'Size_Factor']
   pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]
@@ -138,10 +138,10 @@ compress_expression_v2 <- function(cds, lineage, start, window = F, gene = FALSE
   else{
     print(paste0("Compressing lineage ", lineage, " and fitting curves"))
     if(cores != F){
-      exp.comp = pbsapply(exp, compress2, window = window, step = step, cl = cl)
+      exp.comp = pbapply(exp, 2, compress2, window = window, step = step, cl = cl)
     }
     else{
-      exp.comp = pbsapply(exp, compress2, window = window, step = step)
+      exp.comp = pbapply(exp, 2, compress2, window = window, step = step)
     }
   }
   if(gene != F){

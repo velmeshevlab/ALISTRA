@@ -53,21 +53,21 @@ combine_objects <- function(obj1, obj2, name1, name2){
   cds_new@'expression'<-obj1@'expression'
   cds_new@'expectation'<-obj1@'expectation'
   cds_new@'pseudotime'<-obj1@'pseudotime'
-  names(cds_new@'graphs') <- paste(names(cds_new@'graphs'), name1, sep = "_")
-  names(cds_new@'lineages') <- paste(names(cds_new@'lineages'), name1, sep = "_")
-  names(cds_new@'expression') <- paste(names(cds_new@'expression'), name1, sep = "_")
-  names(cds_new@'expectation') <- paste(names(cds_new@'expectation'), name1, sep = "_")
-  names(cds_new@'pseudotime') <- paste(names(cds_new@'pseudotime'), name1, sep = "_")
+  names(cds_new@'graphs') <- paste(names(cds_new@'graphs'), name1, sep = "")
+  names(cds_new@'lineages') <- paste(names(cds_new@'lineages'), name1, sep = "")
+  names(cds_new@'expression') <- paste(names(cds_new@'expression'), name1, sep = "")
+  names(cds_new@'expectation') <- paste(names(cds_new@'expectation'), name1, sep = "")
+  names(cds_new@'pseudotime') <- paste(names(cds_new@'pseudotime'), name1, sep = "")
   cds_new@'graphs'<-c(cds_new@'graphs', obj2@'graphs')
   cds_new@'lineages'<-c(cds_new@'lineages', obj2@'lineages')
   cds_new@'expression'<-c(cds_new@'expression', obj2@'expression')
   cds_new@'expectation'<-c(cds_new@'expectation', obj2@'expectation')
   cds_new@'pseudotime'<-c(cds_new@'pseudotime', obj2@'pseudotime')
-  names(cds_new@'graphs')[(length(names(obj2@'graphs'))+1):length(names(cds_new@'graphs'))] <- paste(names(obj2@'graphs'), name2, sep = "_")
-  names(cds_new@'lineages')[(length(names(obj2@'lineages'))+1):length(names(cds_new@'lineages'))] <- paste(names(obj2@'lineages'), name2, sep = "_")
-  names(cds_new@'expression')[(length(names(obj2@'expression'))+1):length(names(cds_new@'expression'))] <- paste(names(obj2@'expression'), name2, sep = "_")
-  names(cds_new@'expectation')[(length(names(obj2@'expectation'))+1):length(names(cds_new@'expectation'))] <- paste(names(obj2@'expectation'), name2, sep = "_")
-  names(cds_new@'pseudotime')[(length(names(obj2@'pseudotime'))+1):length(names(cds_new@'pseudotime'))] <- paste(names(obj2@'pseudotime'), name2, sep = "_")
+  names(cds_new@'graphs')[(length(names(obj2@'graphs'))+1):length(names(cds_new@'graphs'))] <- paste(names(obj2@'graphs'), name2, sep = "")
+  names(cds_new@'lineages')[(length(names(obj2@'lineages'))+1):length(names(cds_new@'lineages'))] <- paste(names(obj2@'lineages'), name2, sep = "")
+  names(cds_new@'expression')[(length(names(obj2@'expression'))+1):length(names(cds_new@'expression'))] <- paste(names(obj2@'expression'), name2, sep = "")
+  names(cds_new@'expectation')[(length(names(obj2@'expectation'))+1):length(names(cds_new@'expectation'))] <- paste(names(obj2@'expectation'), name2, sep = "")
+  names(cds_new@'pseudotime')[(length(names(obj2@'pseudotime'))+1):length(names(cds_new@'pseudotime'))] <- paste(names(obj2@'pseudotime'), name2, sep = "")
   cds_new
   }
 

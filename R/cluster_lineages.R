@@ -94,15 +94,14 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 }
       
 #' @export
-get_max_age_sub <- function(gene, age, fit, pt.comp, age.comp){
-fit = fit[,gene]
-res = cbind(fit, pt.comp, age.comp)
-colnames(res) <- c("exp", "pt", "age")
-res = as.data.frame(res)
-age_max = res[res$exp == max(res$exp),3]
-age_range = age[which.min(abs(age$age_num - age_max)),1]
-age_range
+get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1){
+  fit = fit[,gene]
+  inc = min(which((fit-min(fit))>((max(fit)-min(fit))*age_factor)))
+  age_num = age.comp[inc]
+  target_age = min(age[age$age_num > age_num,2])
+  age_range = unique(age[age$age_num == target_age,1])
 }
+
 
 #' @export
 get_max_age <- function(cds, meta, genes = NULL, lineage, start, age_factor = 0.9){

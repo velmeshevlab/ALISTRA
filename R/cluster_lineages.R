@@ -94,7 +94,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 }
 
 #' @export
-get_peak_age <- function(cds, genes, lineage, meta){
+get_peak_age <- function(cds, genes, lineage, start, meta){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)
   eval(parse(text=input))
@@ -108,7 +108,7 @@ get_peak_age <- function(cds, genes, lineage, meta){
   age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
   res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, age.comp = age.comp, age_factor = 1)
   res
-} 
+}
     
 #' @export
 get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1){

@@ -92,7 +92,24 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
     c("other","Adult",mode)
   }
 }
-      
+
+#' @export
+get_peak_age <- function(cds, genes, lineage, meta){
+  cds_name = deparse(substitute(cds))
+  input = paste0("fit = ",cds_name,"@expectation$", lineage)
+  eval(parse(text=input))
+  N = nrow(fit)
+  age = meta[,c("age_range", "age_num")]
+  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+  cds_subset = eval(parse(text=input))
+  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+  pt = pt[order(pt)]
+  age_sel = age[names(pt), 2]
+  age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
+  res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, age.comp = age.comp, age_factor = 1)
+  res
+} 
+    
 #' @export
 get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1){
   fit = fit[,gene]

@@ -113,13 +113,12 @@ get_peak_age <- function(cds, genes, lineage, start, meta){
 #' @export
 get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1){
   fit = fit[,gene]
-  inc = min(which((fit-min(fit))>((max(fit)-min(fit))*age_factor)))
+  inc = min(which((fit-min(fit))>=((max(fit)-min(fit))*age_factor)))
   age_num = age.comp[inc]
-  target_age = min(age[age$age_num > age_num,2])
+  target_age = median(age[age$age_num > age_num,2])
   age_range = unique(age[age$age_num == target_age,1])
   age_range
 }
-
 
 #' @export
 get_max_age <- function(cds, meta, genes = NULL, lineage, start, age_factor = 0.9){

@@ -94,7 +94,33 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 }
 
 #' @export
-get_peak_age <- function(cds, genes, lineage, start, meta, age_factor = 1){
+get_peak_age_branches <- function(cds, genes, lineages, meta, age_factor = 1){
+  res_matrix = matrix(nrow = length(genes), ncol = 0,)
+  for(lin in lineages){
+  print(lin)
+  cds_name = deparse(substitute(cds))
+  input = paste0("fit = ",cds_name,"@expectation$", lin)
+  eval(parse(text=input))
+  N = nrow(fit)
+  age = meta[,c("age_range", "age_num")]
+  input = paste0("cells = ",cds_name,"@lineages$", lin)
+  eval(parse(text=input))
+  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]][cells]
+  pt = pt[order(pt)]
+  age_sel = age[names(pt), 2]
+  window = length(age_sel)/N
+  step = ((length(age_sel)-window)/N)
+  age.comp = SlidingWindow("mean", age_sel, window, step)
+  res = pbsapply(genes, get_max_age_sub, fit = fit, age = age, age.comp = age.comp, age_factor = age_factor)
+  res_matrix = cbind(res_matrix, as.data.frame(res)[,1])
+  }
+  rownames(res_matrix) <- genes
+  colnames(res_matrix) <- lineages
+  res_matrix
+}
+    
+#' @export
+get_peak_age <- function(cds, genes, lineage, meta, age_factor = 1){
   cds_name = deparse(substitute(cds))
   input = paste0("fit = ",cds_name,"@expectation$", lineage)
   eval(parse(text=input))
@@ -111,9 +137,9 @@ get_peak_age <- function(cds, genes, lineage, start, meta, age_factor = 1){
   res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, age.comp = age.comp, age_factor = age_factor)
   res
 }
-
+                     
 #' @export
-get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1, shift_factor = 0.2, max_age = "Adult", min_age = "2nd trimester"){
+get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1, shift_factor = 0.1, max_age = "Adult", min_age = "2nd trimester"){
   fit = fit[,gene]
   age = age[order(age$age_num),]
   inc = min(which((fit-min(fit))>=((max(fit)-min(fit))*age_factor)))
@@ -136,9 +162,9 @@ get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1, shift_fac
   else{
     mmax = age.comp[inc]
   }
-  age_num_min = min(mmax, mmin)
-  age_num_max = max(mmax, mmin)
-  target_age = age[age$age_num > age_num_min & age$age_num < age_num_max,1]
+  age_num_min = unique(age$age_num[which(abs(age$age_num - min(mmax, mmin)) == min(abs(age$age_num - min(mmax, mmin))))])
+  age_num_max = unique(age$age_num[which(abs(age$age_num - max(mmax, mmin)) == min(abs(age$age_num - max(mmax, mmin))))])
+  target_age = age[age$age_num >= age_num_min & age$age_num <= age_num_max,1]
   age_range = names(sort(table(target_age),decreasing=TRUE)[1])
   }
   age_range

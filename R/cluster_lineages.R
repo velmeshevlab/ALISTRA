@@ -100,6 +100,7 @@ get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1){
   age_num = age.comp[inc]
   target_age = min(age[age$age_num > age_num,2])
   age_range = unique(age[age$age_num == target_age,1])
+  age_range
 }
 
 

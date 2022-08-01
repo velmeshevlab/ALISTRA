@@ -100,9 +100,9 @@ get_peak_age <- function(cds, genes, lineage, start, meta, age_factor = 1){
   eval(parse(text=input))
   N = nrow(fit)
   age = meta[,c("age_range", "age_num")]
-  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
-  cds_subset = eval(parse(text=input))
-  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+  input = paste0("cells = ",cds_name,"@lineages$", lineage)
+  eval(parse(text=input))
+  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]][cells]
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
   window = length(age_sel)/N
@@ -111,7 +111,7 @@ get_peak_age <- function(cds, genes, lineage, start, meta, age_factor = 1){
   res = pbsapply(genes, get_max_age_sub, age = age, fit = fit, age.comp = age.comp, age_factor = age_factor)
   res
 }
-    
+
 #' @export
 get_max_age_sub  <- function(gene, fit, age, age.comp, age_factor = 1, shift_factor = 0.2, max_age = "Adult", min_age = "2nd trimester"){
   fit = fit[,gene]

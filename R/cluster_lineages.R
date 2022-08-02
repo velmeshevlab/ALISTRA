@@ -128,7 +128,9 @@ get_peak_age <- function(cds, genes, lineage, meta, age_factor = 1){
   age = meta[,c("age_range", "age_num")]
   input = paste0("cells = ",cds_name,"@lineages$", lineage)
   eval(parse(text=input))
-  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]][cells]
+  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+  cells = cells[cells %in% names(pt)]
+  pt = pt[cells]
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
   window = length(age_sel)/N

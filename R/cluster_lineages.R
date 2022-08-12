@@ -1,5 +1,6 @@
 #' @export
-get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start, age_factor = 0.9){
+#' @export
+get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
   if(length(genes) == 0){
     genes = as.character(rownames(read.table(paste0(lineage, "_spec.txt"), sep = "\t")))
   }
@@ -14,12 +15,12 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start, age_factor =
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
   age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
-  res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp, age_factor = age_factor)
+  res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp)
   res
 }
 
 #' @export
-phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 1){
+phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
   age_max = get_max_age_sub(gene, fit, age, age.comp)
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)

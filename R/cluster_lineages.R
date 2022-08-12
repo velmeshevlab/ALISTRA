@@ -8,9 +8,9 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
   eval(parse(text=input))
   N = nrow(fit)
   age = meta[,c("age_range", "age_num")]
-  input = paste0("cells = ",cds_name,"@lineages$", lin)
-  eval(parse(text=input))
-  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]][cells]
+  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+  cds_subset = eval(parse(text=input))
+  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
   window = length(age_sel)/N

@@ -1,5 +1,4 @@
 #' @export
-#' @export
 get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
   if(length(genes) == 0){
     genes = as.character(rownames(read.table(paste0(lineage, "_spec.txt"), sep = "\t")))
@@ -14,7 +13,9 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
   pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
-  age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
+  window = length(age_sel)/N
+  step = ((length(age_sel)-window)/N)
+  age.comp = SlidingWindow("mean", age_sel, window, step)
   res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp)
   res
 }
@@ -65,6 +66,10 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
     if(length(locmin) == 0){
       mode = "steady"
     }
+  }
+  if(direction == "descrease"){
+    if(mode == "burst" | mode == "steady")
+    mode = "drop"
   }
   c(age_max, mode, direction)
 }

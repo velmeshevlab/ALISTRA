@@ -182,7 +182,7 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   eval(parse(text=input))
   N = nrow(fit)
   age = meta[,c("age_range", "age_num")]
-  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+  input = paste0("get_lineage_object(",cds_name,", '", lin, "',", start, ")")
   cds_subset = eval(parse(text=input))
   pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]

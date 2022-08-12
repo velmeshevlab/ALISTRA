@@ -170,7 +170,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 }
 
 #' @export
-get_peak_age_branches <- function(cds, genes, lineages, meta, age_factor = 1){
+get_peak_age_branches <- function(cds, genes, lineages, meta){
   res_matrix = matrix(nrow = length(genes), ncol = 0,)
   for(lin in lineages){
   print(lin)
@@ -187,7 +187,7 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, age_factor = 1){
   window = length(age_sel)/N
   step = ((length(age_sel)-window)/N)
   age.comp = SlidingWindow("mean", age_sel, window, step)
-  res = pbsapply(genes, get_max_age_sub, fit = fit, age = age, age.comp = age.comp, age_factor = age_factor)
+  res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp)
   res_matrix = cbind(res_matrix, as.data.frame(res)[,1])
   }
   rownames(res_matrix) <- genes

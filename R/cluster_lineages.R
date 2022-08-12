@@ -170,8 +170,11 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 }
 
 #' @export
-get_peak_age_branches <- function(cds, genes, lineages, meta){
-  res_matrix = matrix(nrow = length(genes), ncol = 0,)
+get_peak_age_branches <- function(cds, genes, lineages, meta, start){
+  age_max_mat = matrix(nrow = length(genes), ncol = 0,)
+  mode_mat = matrix(nrow = length(genes), ncol = 0,)
+  direction_mat = matrix(nrow = length(genes), ncol = 0,)
+  lineage_mat = matrix(nrow = length(genes), ncol = 0,)
   for(lin in lineages){
   print(lin)
   cds_name = deparse(substitute(cds))
@@ -179,20 +182,36 @@ get_peak_age_branches <- function(cds, genes, lineages, meta){
   eval(parse(text=input))
   N = nrow(fit)
   age = meta[,c("age_range", "age_num")]
-  input = paste0("cells = ",cds_name,"@lineages$", lin)
-  eval(parse(text=input))
-  pt <- cds@principal_graph_aux@listData[["UMAP"]][["pseudotime"]][cells]
+  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+  cds_subset = eval(parse(text=input))
+  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
   pt = pt[order(pt)]
   age_sel = age[names(pt), 2]
   window = length(age_sel)/N
   step = ((length(age_sel)-window)/N)
   age.comp = SlidingWindow("mean", age_sel, window, step)
   res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp)
-  res_matrix = cbind(res_matrix, as.data.frame(res)[,1])
+  res = cbind(t(res), rep(lineage, ncol(res)))
+  res = as.data.frame(res)
+  res$gene <- rownames(res)
+  colnames(res) <- c("age_max", "mode", "direction", "lineage", "gene")
+  age_max_mat = cbind(age_max_mat, res$age_max)
+  mode_mat = cbind(mode_mat, res$age_max)
+  direction_mat = cbind(direction_mat, res$age_max)
   }
-  rownames(res_matrix) <- genes
-  colnames(res_matrix) <- lineages
-  res_matrix
+  rownames(age_max_mat) <- genes
+  colnames(age_max_mat) <- lineages
+  rownames(mode_mat) <- genes
+  colnames(mode_mat) <- lineages
+  rownames(direction_mat) <- genes
+  colnames(direction_mat) <- lineages
+  common <- function(x) if(length(x) != length(unique(x))) {names(which.max(table(x)))} else{"NA"}
+  age_max = apply(age_max_mat, 1, common)
+  mode = apply(mode_mat, 1, common)
+  direction = apply(direction_mat, 1, common)
+  out = cbind(age_max, mode, direction)
+  rownames(out) <- genes
+  out
 }
     
 #' @export

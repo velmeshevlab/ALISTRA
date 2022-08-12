@@ -20,6 +20,7 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start, age_factor =
 
 #' @export
 phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 1){
+  age_max = get_max_age_sub(gene, fit, age, age.comp)
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)
@@ -34,7 +35,7 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, 
   mode = "unclassified"
   if(length(locmax) > 0){
     if(length(locmin) > 0){
-    if(locmax>locmin & abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
+    if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
       mode = "plateau"
     }
     if(locmin>locmax & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
@@ -64,7 +65,7 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, 
       mode = "steady"
     }
   }
-  mode
+  c(age_max, mode, direction)
 }
                      
 #' @export

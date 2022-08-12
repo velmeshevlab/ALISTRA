@@ -196,8 +196,8 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   res$gene <- rownames(res)
   colnames(res) <- c("age_max", "mode", "direction", "lineage", "gene")
   age_max_mat = cbind(age_max_mat, res$age_max)
-  mode_mat = cbind(mode_mat, res$age_max)
-  direction_mat = cbind(direction_mat, res$age_max)
+  mode_mat = cbind(mode_mat, res$mode)
+  direction_mat = cbind(direction_mat, res$direction)
   }
   rownames(age_max_mat) <- genes
   colnames(age_max_mat) <- lineages

@@ -191,7 +191,7 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   step = ((length(age_sel)-window)/N)
   age.comp = SlidingWindow("mean", age_sel, window, step)
   res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp)
-  res = cbind(t(res), rep(lineage, ncol(res)))
+  res = cbind(t(res), rep(lin, ncol(res)))
   res = as.data.frame(res)
   res$gene <- rownames(res)
   colnames(res) <- c("age_max", "mode", "direction", "lineage", "gene")

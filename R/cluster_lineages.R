@@ -1,4 +1,73 @@
 #' @export
+get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start, age_factor = 0.9){
+  if(length(genes) == 0){
+    genes = as.character(rownames(read.table(paste0(lineage, "_spec.txt"), sep = "\t")))
+  }
+  cds_name = deparse(substitute(cds))
+  input = paste0("fit = ",cds_name,"@expectation$", lineage)
+  eval(parse(text=input))
+  N = nrow(fit)
+  age = meta[,c("age_range", "age_num")]
+  input = paste0("get_lineage_object(",cds_name,", '", lineage, "',", start, ")")
+  cds_subset = eval(parse(text=input))
+  pt <- cds_subset@principal_graph_aux@listData[["UMAP"]][["pseudotime"]]
+  pt = pt[order(pt)]
+  age_sel = age[names(pt), 2]
+  age.comp = SlidingWindow("mean", age_sel, length(age_sel)/N, step)
+  res = pbsapply(genes, phase_sub_v2, fit = fit, age = age, age.comp = age.comp, age_factor = age_factor)
+  res
+}
+
+#' @export
+phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age_factor = 1){
+  fit = fit[,gene]
+  locmin = rollapply(fit, 3, function(x) which.min(x)==2)
+  locmin = which(locmin == TRUE)
+  locmax = rollapply(fit, 3, function(x) which.max(x)==2)
+  locmax = which(locmax == TRUE)
+  if(min(which(fit == max(fit))) < min(which(fit == min(fit)))){
+    direction = "descrease"
+  }
+  else{
+    direction = "increase"
+  }
+  mode = "unclassified"
+  if(length(locmax) > 0){
+    if(length(locmin) > 0){
+    if(locmax>locmin & abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
+      mode = "plateau"
+    }
+    if(locmin>locmax & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
+      mode = "biphasic"
+    }
+    if(locmin<locmax & (max(fit[1:locmin]) - fit[locmin])/max(fit) > factor){
+      mode = "biphasic"
+    }
+    if(length(locmin) > 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
+        mode = "transient"
+    }
+    }
+  else if(length(locmin) == 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
+    mode = "transient"
+  }
+  else if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
+    mode = "plateau" 
+  }
+  }
+  else{
+    if(length(locmin) > 0){
+    if((fit[length(fit)-fit[locmin]])/fit[locmin] > factor2){
+      mode = "burst"
+    }
+    }
+    if(length(locmin) == 0){
+      mode = "steady"
+    }
+  }
+  mode
+}
+                     
+#' @export
 format_lineage_out <- function(lineages){
   out = matrix(nrow = 0, ncol = 6,) 
   for(lineage in lineages){

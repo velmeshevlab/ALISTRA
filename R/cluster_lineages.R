@@ -21,7 +21,7 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
 }
 
 #' @export
-phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
+phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.4){
   age_max = get_max_age_sub(gene, fit, age, age.comp)
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
@@ -37,39 +37,51 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5){
   mode = "unclassified"
   if(length(locmax) > 0){
     if(length(locmin) > 0){
-    if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
-      mode = "plateau"
-    }
-    if(locmin>locmax & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor){
-      mode = "biphasic"
-    }
-    if(locmin<locmax & (max(fit[1:locmin]) - fit[locmin])/max(fit) > factor){
-      mode = "biphasic"
-    }
-    if(length(locmin) > 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
+      if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
+        mode = "plateau"
+      }
+      if(locmax<locmin & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor2){
+        mode = "burst"
+      }
+      if(locmin>locmax & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor2 & (fit[locmax] - fit[locmin])/max(fit) > factor2){
+        mode = "biphasic"
+      }
+      if(locmin>locmax & (max(fit[locmin:length(fit)]) - fit[locmin])/max(fit) > factor2 & (fit[locmax]-min(fit[1:locmax]))/max(fit) > factor2){
+          mode = "biphasic"
+      }
+      if(locmin<locmax & (max(fit[1:locmin]) - fit[locmin])/max(fit) > factor2 & (max(fit) - fit[locmin])/max(fit) > factor2){
+        mode = "biphasic"
+      }
+      if(length(locmin) > 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
         mode = "transient"
+      }
     }
+    else if(length(locmin) == 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
+      mode = "transient"
     }
-  else if(length(locmin) == 0 & (max(fit)-fit[locmax])/max(fit) < 0.05 & (max(fit) - fit[1]) > (max(fit)*factor2) & (max(fit) - fit[length(fit)]) > (max(fit)*factor2)){
-    mode = "transient"
-  }
-  else if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
-    mode = "plateau" 
-  }
+    else if(abs(fit[locmax]-fit[length(fit)])/fit[locmax] < factor){
+      mode = "plateau" 
+    }
   }
   else{
     if(length(locmin) > 0){
-    if((fit[length(fit)-fit[locmin]])/fit[locmin] > factor2){
-      mode = "burst"
-    }
+      if((fit[length(fit)-fit[locmin]])/fit[locmin] > factor2){
+        mode = "burst"
+      }
     }
     if(length(locmin) == 0){
-      mode = "steady"
+      change1 = abs((fit[as.integer(length(fit))/2] - fit[1]))
+      change2 = abs((fit[length(fit)] - fit[as.integer(length(fit))/2]))
+      if(change1/change2 > factor2)
+        mode = "steady"
+      else{
+        mode = "burst"
+          }
     }
   }
   if(direction == "descrease"){
     if(mode == "burst" | mode == "steady")
-    mode = "drop"
+      mode = "drop"
   }
   c(age_max, mode, direction)
 }

@@ -68,7 +68,7 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.4){
       if((fit[length(fit)-fit[locmin]])/fit[locmin] > factor2){
         mode = "burst"
       }
-      if((max(fit[1:locmin]) - fit[locmin])/max(fit) > factor2 & (max(fit) - fit[locmin])/max(fit) > factor2){
+      if((max(fit[1:locmin]) - fit[locmin])/max(fit) > factor2 & (fit[length(fit)] - fit[locmin])/max(fit) > factor2){
         mode = "biphasic"
       }
     }

@@ -275,7 +275,7 @@ return(exp)
 }
 
 #' @export
-plot_ridge <- function(cds, gene, lineages, scale_factor = 4, alpha = 0.6, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+plot_ridge <- function(cds, gene, lineages, scale_factor = FALSE, alpha = 0.6, text.size = 18, plot.title.size = 24, legend.key.size = 2, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
   cds_name = deparse(substitute(cds))
   input = paste0(cds_name,"@expression$", lineages[1])
   M = nrow(eval(parse(text = input)))
@@ -286,7 +286,6 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, alpha = 0.6, text.
     pts = c(pts, pt)
   }
   max.pt = max(pts)
-  print(max.pt)
   dd = data.frame("1"=0,"2"=0,"3"=0)[FALSE,]
   pt = seq(from=0, to=max.pt, by = max.pt/(M-1))
   fits = c()
@@ -315,7 +314,12 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, alpha = 0.6, text.
       fit = rep(0, N)
     }
     dd = rbind(dd, cbind(fit,pt,rep(lineage, M)))
-    ys = c(ys, rep((max(fits)/scale_factor)*i,M))
+    if(scale_factor == FALSE){
+    	ys = c(ys, rep(0,M))
+    }
+    else{
+    	ys = c(ys, rep((max(fits)/scale_factor)*i,M))
+    }
     i = i+1
     }
   colnames(dd) <- c("expression", "pseudotime", "lineage")
@@ -327,9 +331,9 @@ plot_ridge <- function(cds, gene, lineages, scale_factor = 4, alpha = 0.6, text.
     colors.adj = append(colors.adj, adjustcolor(color, alpha.f = alpha))
   }
   q <- ggplot(dd, aes(pseudotime, ys, height = expression, group = lineage, fill = lineage), fit = lineage) + geom_ridgeline() + scale_fill_manual(values = colors.adj)
-  q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
-  #q <- q + scale_y_log10()
-  #q <- q + ylim(y = c(0,ymax))
+  #q <- q + scale_y_continuous(trans=scales::pseudo_log_trans(base = 10))
+  q <- q + scale_y_log10()
+  q <- q + ylim(y = c(0,ymax))
   q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
   q
 }

@@ -234,7 +234,7 @@ cds_subset <- order_cells(cds_subset, root_pr_nodes = c(paste0("Y_", as.characte
 return(cds_subset)
 }
 
-isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = F, starting_clusters = NULL, subset = FALSE, N = 5, cl = 1){
+isolate_lineage_sub <- function(cds, lineage, sel_clusters = NULL, start_regions = NULL, starting_clusters = NULL, subset = FALSE, N = 5, cl = 1){
   cds_name = deparse(substitute(cds))
   input = paste0("sub.graph = ",cds_name,"@graphs$", lineage)
   eval(parse(text=input))
@@ -261,10 +261,10 @@ isolate_lineage_sub <- function(cds, lineage, sel_clusters = F, start_regions = 
   #only keep cells in the progenitor and lineage-specific clusters
   sel.cells1 = c()
   sel.cells2 = sel.cells
-  if(starting_clusters != F){
+  if(length(starting_clusters) > 0){
     sel.cells1 = names(cds@"clusters"[["UMAP"]]$clusters[cds@"clusters"[["UMAP"]]$clusters %in% starting_clusters])
   }
-  if(start_regions != F){
+  if(length(start_regions) > 0){
     sel.cells1 = sel.cells1[sel.cells1 %in% rownames(cds@colData[cds@colData$region %in% start_regions,])]
   }
   if(length(sel_clusters) > 0){

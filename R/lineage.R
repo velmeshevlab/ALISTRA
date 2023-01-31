@@ -333,8 +333,8 @@ colnames(node_coords) = new_name
 rownames(node_coords) = c("UMAP_1", "UMAP_2")
 cds@principal_graph_aux[["UMAP"]]$dp_mst <- cbind(cds@principal_graph_aux[["UMAP"]]$dp_mst, node_coords)
 graph.new <- add_vertices(graph.old, 1,attr = list(name = new_name))
-graph.new <- add_edges(graph.new, c(node1, node3))
-graph.new <- add_edges(graph.new, c(node3, node2))
+graph.new <- add_edges(graph.new, c(node1, new_name))
+graph.new <- add_edges(graph.new, c(new_name, node2))
 }
 cds@principal_graph[["UMAP"]] <- graph.new
 return(cds)

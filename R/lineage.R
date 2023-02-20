@@ -40,13 +40,13 @@ combine_objects <- function(obj1, obj2, name1, name2){
   #cds_new@'principal_graph'<-obj1@'principal_graph'
   #cds_new@'clusters'<-obj1@'clusters'
   cds_new@'int_elementMetadata'<-obj1@'int_elementMetadata'
-  #cds_new@'int_colData'<-obj1@'int_colData'
+  cds_new@'int_colData'<-obj1@'int_colData'
   cds_new@'int_metadata'<-obj1@'int_metadata'
   #cds_new@'rowRanges'<-obj1@'rowRanges'
   #cds_new@'colData'<-obj1@'colData'
   #cds_new@'assays'<-obj1@'assays'
   #cds_new@'NAMES'<-obj1@'NAMES'
-  cds_new@'elementMetadata'<-obj1@'elementMetadata'
+  #cds_new@'elementMetadata'<-obj1@'elementMetadata'
   #cds_new@'metadata'<-obj1@'metadata'
   cds_new@'graphs'<-c(obj1@'graphs', obj2@'graphs')
   cds_new@'lineages'<-c(obj1@'lineages', obj2@'lineages')

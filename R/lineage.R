@@ -34,20 +34,20 @@ monocle_theme_opts <- function()
 #' @export
 combine_objects <- function(obj1, obj2, name1, name2){
   cds_new = new("cell_data_set_ext")
-  cds_new@'preprocess_aux'<-obj1@'preprocess_aux'
-  cds_new@'reduce_dim_aux'<-obj1@'reduce_dim_aux'
-  cds_new@'principal_graph_aux'<-obj1@'principal_graph_aux'
-  cds_new@'principal_graph'<-obj1@'principal_graph'
-  cds_new@'clusters'<-obj1@'clusters'
-  cds_new@'int_elementMetadata'<-obj1@'int_elementMetadata'
-  cds_new@'int_colData'<-obj1@'int_colData'
-  cds_new@'int_metadata'<-obj1@'int_metadata'
-  cds_new@'rowRanges'<-obj1@'rowRanges'
-  cds_new@'colData'<-obj1@'colData'
-  cds_new@'assays'<-obj1@'assays'
-  cds_new@'NAMES'<-obj1@'NAMES'
-  cds_new@'elementMetadata'<-obj1@'elementMetadata'
-  cds_new@'metadata'<-obj1@'metadata'
+  #cds_new@'preprocess_aux'<-obj1@'preprocess_aux'
+  #cds_new@'reduce_dim_aux'<-obj1@'reduce_dim_aux'
+  #cds_new@'principal_graph_aux'<-obj1@'principal_graph_aux'
+  #cds_new@'principal_graph'<-obj1@'principal_graph'
+  #cds_new@'clusters'<-obj1@'clusters'
+  #cds_new@'int_elementMetadata'<-obj1@'int_elementMetadata'
+  #cds_new@'int_colData'<-obj1@'int_colData'
+  #cds_new@'int_metadata'<-obj1@'int_metadata'
+  #cds_new@'rowRanges'<-obj1@'rowRanges'
+  #cds_new@'colData'<-obj1@'colData'
+  #cds_new@'assays'<-obj1@'assays'
+  #cds_new@'NAMES'<-obj1@'NAMES'
+  #cds_new@'elementMetadata'<-obj1@'elementMetadata'
+  #cds_new@'metadata'<-obj1@'metadata'
   cds_new@'graphs'<-c(obj1@'graphs', obj2@'graphs')
   cds_new@'lineages'<-c(obj1@'lineages', obj2@'lineages')
   cds_new@'expression'<-c(obj1@'expression', obj2@'expression')

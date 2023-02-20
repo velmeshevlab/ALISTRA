@@ -46,7 +46,7 @@ combine_objects <- function(obj1, obj2, name1, name2){
   #cds_new@'colData'<-obj1@'colData'
   #cds_new@'assays'<-obj1@'assays'
   #cds_new@'NAMES'<-obj1@'NAMES'
-  #cds_new@'elementMetadata'<-obj1@'elementMetadata'
+  cds_new@'elementMetadata'<-obj1@'elementMetadata'
   #cds_new@'metadata'<-obj1@'metadata'
   cds_new@'graphs'<-c(obj1@'graphs', obj2@'graphs')
   cds_new@'lineages'<-c(obj1@'lineages', obj2@'lineages')

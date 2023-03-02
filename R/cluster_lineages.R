@@ -94,7 +94,7 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.4){
                      
 #' @export
 format_lineage_out <- function(lineages){
-  out = matrix(nrow = 0, ncol = 6,) 
+  out = matrix(nrow = 0, ncol = 7,) 
   for(lineage in lineages){
     spec = read.data(paste0(lineage, "_spec.txt"))
     class = read.data(paste0(lineage, "_age_range.txt"))
@@ -104,7 +104,7 @@ format_lineage_out <- function(lineages){
     rownames(res) <- names
     out = rbind(out, res)
   }
-  colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "direction", "gene")
+  colnames(out) <- c("diff", "lineage", "pattern", "age_peak", "age_mid", "direction", "gene")
   out
 }
 

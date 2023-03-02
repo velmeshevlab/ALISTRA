@@ -23,6 +23,7 @@ get_max_age_v2 <- function(cds, meta, genes = NULL, lineage, start){
 #' @export
 phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.4){
   age_max = get_max_age_sub(gene, fit, age, age.comp)
+  age_mid = get_max_age_sub(gene, fit, age, age.comp, age_factor = 0.5)
   fit = fit[,gene]
   locmin = rollapply(fit, 3, function(x) which.min(x)==2)
   locmin = which(locmin == TRUE)

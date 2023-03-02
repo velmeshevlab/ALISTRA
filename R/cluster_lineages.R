@@ -89,7 +89,7 @@ phase_sub_v2 <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.4){
       mode = "drop"
   }
     }
-  c(age_max, mode, direction)
+  c(age_max, age_mid, mode, direction)
 }
                      
 #' @export

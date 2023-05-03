@@ -228,16 +228,13 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   colnames(mode_mat) <- lineages
   rownames(direction_mat) <- genes
   colnames(direction_mat) <- lineages
-  common <- function(x) if(length(x) != length(unique(x))) {names(which.max(table(x)))} else{NA}
-  age_max = apply(age_max_mat, 1, common)
-  if(is.na(age_max)){age_max = ages[ages%in%age_max][1]}
-  age_mid = apply(age_mid_mat, 1, common)
-  if(is.na(age_mid)){age_max = ages[ages%in%age_max][1]}
-  mode = apply(mode_mat, 1, common)
-  if(is.na(mode)){mode = mode_mat[,1]}
+  common_age <- function(x) if(length(x) != length(unique(x))) {names(which.max(table(x)))} else{ages[ages%in%x][1]}
+  common <- function(x) if(length(x) != length(unique(x))) {names(which.max(table(x)))} else{paste(x, collapse = "/")}
+  age_max = apply(age_max_mat, 1, common_age)
+  age_mid = apply(age_mid_mat, 1, common_age)
+  pattern = apply(mode_mat, 1, common)
   direction = apply(direction_mat, 1, common)
-  if(is.na(direction)){direction = direction_mat[,1]}
-  out = cbind(age_max, age_mid, mode, direction)
+  out = cbind(pattern, age_max, age_mid, direction)
   rownames(out) <- genes
   out
 }

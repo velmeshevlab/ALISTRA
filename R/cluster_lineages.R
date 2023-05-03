@@ -190,6 +190,7 @@ phase_sub <- function(gene, fit, age, age.comp, factor = 0.2, factor2 = 0.5, age
 #' @export
 get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   age_max_mat = matrix(nrow = length(genes), ncol = 0,)
+  age_mid_mat = matrix(nrow = length(genes), ncol = 0,)
   mode_mat = matrix(nrow = length(genes), ncol = 0,)
   direction_mat = matrix(nrow = length(genes), ncol = 0,)
   lineage_mat = matrix(nrow = length(genes), ncol = 0,)
@@ -212,22 +213,26 @@ get_peak_age_branches <- function(cds, genes, lineages, meta, start){
   res = cbind(t(res), rep(lin, ncol(res)))
   res = as.data.frame(res)
   res$gene <- rownames(res)
-  colnames(res) <- c("age_max", "mode", "direction", "lineage", "gene")
+  colnames(res) <- c("age_max", "age_mid", "mode", "direction", "lineage", "gene")
   age_max_mat = cbind(age_max_mat, res$age_max)
+  age_mid_mat = cbind(age_mid_mat, res$age_mid)
   mode_mat = cbind(mode_mat, res$mode)
   direction_mat = cbind(direction_mat, res$direction)
   }
   rownames(age_max_mat) <- genes
   colnames(age_max_mat) <- lineages
+  rownames(age_mid_mat) <- genes
+  colnames(age_mid_mat) <- lineages
   rownames(mode_mat) <- genes
   colnames(mode_mat) <- lineages
   rownames(direction_mat) <- genes
   colnames(direction_mat) <- lineages
   common <- function(x) if(length(x) != length(unique(x))) {names(which.max(table(x)))} else{"NA"}
   age_max = apply(age_max_mat, 1, common)
+  age_mid = apply(age_mid_mat, 1, common)
   mode = apply(mode_mat, 1, common)
   direction = apply(direction_mat, 1, common)
-  out = cbind(age_max, mode, direction)
+  out = cbind(age_max, age_mid, mode, direction)
   rownames(out) <- genes
   out
 }

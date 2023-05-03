@@ -97,7 +97,7 @@ format_lineage_out <- function(lineages){
   out = matrix(nrow = 0, ncol = 7,) 
   for(lineage in lineages){
     spec = read.data(paste0(lineage, "_spec.txt"))
-    class = read.data(paste0(lineage, "_age_range.txt"))
+    class = read.data(paste0("mod_", lineage, ".txt"))
     res = cbind(spec, class)
     names = paste0(rownames(res), "_", lineage)
     res$gene <- rownames(res)

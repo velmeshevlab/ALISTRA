@@ -440,7 +440,7 @@ plot_multiple <- function(cds, gene, lineages, meta = NULL, points = T, age.scal
   ten = d[which.min(abs(d[,2]-ten)),1]
   q <- q + scale_y_log10()
     if(age.scale == T){
-  q <- q + scale_x_continuous(breaks = c(0, second_third, birth, infant, four, ten), labels = c("2nd", "3rd", "birth", "1y", "4y", "10y"))
+  q <- q + scale_x_continuous(breaks = c(0, second_third, birth, infant, four), labels = c("2nd", "3rd", "birth", "1y", "4y"))
   }
   q <- q + ylim(y = c(0,ymax))
   q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.text.x=element_text(angle = 60, hjust=1), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)

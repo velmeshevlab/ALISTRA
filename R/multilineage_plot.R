@@ -347,7 +347,7 @@ return(pt)
 }
 
 #' @export
-plot_multiple <- function(cds, gene, lineages, points = T, text.size = 14, plot.title.size = 36, legend.key.size = 0.5, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "right"){
+plot_multiple <- function(cds, gene, lineages, meta = NULL, points = T, age.scale = T, text.size = 14, plot.title.size = 36, legend.key.size = 0.5, legend.text.size = 10, colors = c("red", "blue", "green", "cyan", "magenta", "purple", "orange", "black", "yellow", "tan"), N = 500, legend_position = "none"){
   cds_name = deparse(substitute(cds))
   input = paste0(cds_name,"@expression$", lineages[1])
   N = nrow(eval(parse(text = input)))
@@ -422,8 +422,28 @@ plot_multiple <- function(cds, gene, lineages, points = T, text.size = 14, plot.
   else{
     q <- q + geom_line(aes(x = pseudotime, y = fit, color = lineage), size = I(1.2)) + scale_color_manual(values = colors)
   }
-  q <- q + scale_y_log10() 
+  age = meta[,c("age_num", "age_range")]
+  age = age[order(age$age_num),]
+  window = nrow(meta)/N
+  step = ((nrow(meta)-window)/N)
+  age.comp = SlidingWindow("mean", age$age_num, window, step)
+  d = cbind(as.data.frame(seq(from=0, to=max.pt, by = max.pt/(N-1))), age.comp)
+  second_third = quantile(age[age$age_range == "2nd trimester",]$age_num, 0.95)
+  second_third = d[which.min(abs(d[,2]-second_third)),1]
+  birth = quantile(age[age$age_range == "3rd trimester",]$age_num, 0.95)
+  birth = d[which.min(abs(d[,2]-birth)),1]
+  infant = quantile(age[age$age_range == "0-1 years",]$age_num, 0.95)
+  infant = d[which.min(abs(d[,2]-infant)),1]
+  four = quantile(age[age$age_range == "2-4 years",]$age_num, 0.95)
+  four = d[which.min(abs(d[,2]-four)),1]
+  ten = quantile(age[age$age_range == "4-10 years",]$age_num, 0.95)
+  ten = d[which.min(abs(d[,2]-ten)),1]
+  q <- q + scale_y_log10()
+    if(age.scale == T){
+  q <- q + scale_x_continuous(breaks = c(0, second_third, birth, infant, four, ten), labels = c("2nd", "3rd", "birth", "1y", "4y", "10y"))
+  }
   q <- q + ylim(y = c(0,ymax))
-  q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
+  q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.text.x=element_text(angle = 60, hjust=1), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
   q
 }
+

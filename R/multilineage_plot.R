@@ -412,7 +412,7 @@ plot_multiple <- function(cds, gene, lineages, meta = NULL, points = T, age.scal
   q <- ggplot(data = dd)
   if(points == T){
     for(N in 1:length(lineages)){
-      loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(1))")
+      loop_input1 = paste0("geom_point(aes_string(x='pseudotime',y = '", paste0('exp_', lineages[N]), "',color='pseudotime'), size=I(0.2))")
       loop_input2 = paste0("scale_color_gradient2(lineages[N],low='grey', ", "high='",colors[N],"')")
       loop_input3 = "new_scale_color()"
       loop_input4 = paste0("geom_line(aes_string(x='pseudotime', y = '", paste0('fit_', lineages[N]), "',size = I(1.2)), color = '", colors[N],"')")
@@ -446,4 +446,5 @@ plot_multiple <- function(cds, gene, lineages, meta = NULL, points = T, age.scal
   q <- q + monocle_theme_opts() + ylab("Expression") + xlab("Pseudotime") + ggtitle(gene) + theme(legend.key.size = unit(legend.key.size, 'cm'), plot.title = element_text(size = plot.title.size, face="bold", hjust = 0.5), axis.text=element_text(size=text.size), axis.text.x=element_text(angle = 60, hjust=1), axis.title=element_blank(), legend.text=element_text(size=legend.text.size), legend.title=element_text(size=text.size, face = "bold"), legend.position = legend_position)
   q
 }
+
 
